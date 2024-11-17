@@ -13,7 +13,7 @@
         body, html {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Black Han Sans', serif;
             background-color: #f8f8f8;
         }
 
@@ -79,7 +79,7 @@
             display: flex;
             justify-content: space-around;
             padding: 50px 20px;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.2);
         }
 
         .section {
@@ -94,6 +94,7 @@
         }
 
         .section p {
+	    font-family: 'Noto Serif KR', serif;
             font-size: 16px;
             margin-bottom: 20px;
         }

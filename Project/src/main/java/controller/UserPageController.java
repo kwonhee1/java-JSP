@@ -24,8 +24,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class UserPageController extends HttpServlet {
 	//private static final long serialVersionUID = 1L;
 	private static String userImgURIForm = "user%d.png";
-	
-	// userPage.jsp 반환
+    
+    public UserPageController() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User inputUser = new TokenService().getUserFromToken(request, response);
 		request.setAttribute("user", inputUser);

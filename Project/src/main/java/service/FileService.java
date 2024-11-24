@@ -12,10 +12,9 @@ public class FileService {
 	
 	public FileService() { repository = new FileRepository(); }
 	
-	public int saveFile(String imgURL, Part inputPart, String imgURIFormat) {
+	public int saveFile(String imgURL, Part inputPart) {
 		String inputFileName = getFileName(inputPart);
-		String imgURI = getFilePath(imgURL, imgURIFormat);
-		
+		String imgURI = getFilePath(imgURL, inputFileName+"%d.png");
 		try {
 			inputPart.write(imgURL + imgURI);
 			System.out.println("FileService >> saveFile() >> success save file |inputName="+inputFileName+"|url="+imgURL+"|uri="+imgURI);
@@ -41,9 +40,9 @@ public class FileService {
 		System.out.println("FileService >> removeImg() success uri:"+imgURI);
 	}
 	
-	public int updateImg(String imgURL, int oldImgId, Part inputPart, String imgURIFormat) {
+	public int updateImg(String imgURL, int oldImgId, Part inputPart) {
 		removeImg(imgURL, oldImgId);
-		return saveFile(imgURL, inputPart, imgURIFormat); // return created new img id
+		return saveFile(imgURL, inputPart); // return created new img id
 	}
 	
 	private String getFilePath(String imgURL, String imgURIFormat) {
@@ -57,11 +56,14 @@ public class FileService {
 		System.out.println("FileService >> saveFile()>>getFilePath() >> [EROOR] is already exists 100 same name files");
 		return null;
 	}
+	
 	private String getFileName(Part part) {
 	    for (String content : part.getHeader("content-disposition").split(";")) {
-	        if (content.trim().startsWith("filename"))
-	            return content.substring(content.indexOf("=") + 2, content.length() - 1);
+	        if (content.trim().startsWith("filename")) {
+	            String fileName = content.substring(content.indexOf("=") + 2, content.length() - 1);
+	            return fileName.split("\\.")[0]; // .밑에 나머지는 그냥 버림 (대부분 확장자 또는 파일 경로명)
 	        }
-	    return null;
+	    }
+		return null;
 	}
 }

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebServlet("/UserPage")
 public class UserPageController extends HttpServlet {
 	//private static final long serialVersionUID = 1L;
-	private static String userImgURIForm = "user%d.png";
     
     public UserPageController() {
         super();
@@ -84,7 +83,7 @@ public class UserPageController extends HttpServlet {
 				fileService.removeImg(imgURL, loginRepository.getImgId(oldUser.getId()));
 			}
 			// 새로운 img파일 저장
-			imgId = fileService.saveFile(imgURL, inputPart, userImgURIForm);
+			imgId = fileService.saveFile(imgURL, inputPart);
 		}else {
 			imgId = loginRepository.getImgId(inputUserId);
 		}

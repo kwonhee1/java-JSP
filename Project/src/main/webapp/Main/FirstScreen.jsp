@@ -140,11 +140,11 @@
         </div>
 
         <div class="sections">
-            <div class="section" onclick="location.href='링크 URL';">
+            <div class="section" onclick="location.href='';">
                 <h2>오늘 당신의 운동 루틴</h2>
                 <p>당신이 자극시키고 싶은 근육부터 하루 / 7일 동안 할 루틴까지!</p>
             </div>
-            <div class="section" onclick="location.href='<%=projectContextPath+"/Map" %>';">
+            <div class="section" onclick="location.href='<%=projectContextPath+"/MapPage" %>';">
                 <h2>당신 주변의 헬스장들은?</h2>
                 <p>당장 운동하고 싶은데... 주변에 좋은 헬스장 없나?</p>
             </div>
@@ -152,7 +152,7 @@
                 <h2>당신이 원하는 운동 후 식단</h2>
                 <p>누군가 말했다... "운동 후 먹는 것까지 운동이다."</p>
             </div>
-            <div class="section" onclick="location.href='<%=projectContextPath+"/Board" %>';">
+            <div class="section" onclick="location.href='<%=projectContextPath+"/BoardPage" %>';">
                 <h2>실시간 오운완 커뮤니티</h2>
                 <p>혼자 운동하는 건 좀 지루한데... 사람들과의 즐거운 운동 라이프!</p>
             </div>

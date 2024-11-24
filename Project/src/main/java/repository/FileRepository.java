@@ -70,6 +70,8 @@ public class FileRepository extends Repository{
             e.printStackTrace();
         }
         disConnection(conn);
+        
+        sortImgId();
     }
     
     private void sortImgId() {

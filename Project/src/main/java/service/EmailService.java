@@ -16,11 +16,11 @@ import javax.mail.MessagingException;
 import model.User;
 
 public class EmailService { // 서버에 유일한 class로 종속시켜야함 => servletContentListener에 추가 ? 다른 방법은 없나? 로그인할때 바로?
-	private static Map<String, Buff> db = new HashMap<String, Buff>();
+	private static Map<String, String> db = new HashMap<String, String>();
 	private static int key = 1;
 	
 	//add db + send Email
-	public void sendEmail(User input) {
+	public void sendEmail(String inputUserId, String inputUserEmail) {
 		String user = "jspproject2024@gmail.com", passwd = "ccdd thdn wdlz ywuw";
 		String emailKey = createCode();
 		
@@ -44,7 +44,7 @@ public class EmailService { // 서버에 유일한 class로 종속시켜야함 =
             // 이메일 메시지 작성
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(user));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(input.getEmail()));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(inputUserEmail));
             message.setSubject("Login Email Subject");
             message.setText("인증 코드 5자리 : " + emailKey);
 
@@ -53,22 +53,21 @@ public class EmailService { // 서버에 유일한 class로 종속시켜야함 =
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        db.put(emailKey, new Buff(input));
+        db.put(emailKey, inputUserId);
         
-        System.out.println("Email Sent Successfully to "+ input.getEmail() + ", emailKey : "+ emailKey);
+        System.out.println("Email Sent Successfully to "+ inputUserEmail+ ", emailKey : "+ emailKey);
 	}
 	
 	//check db by key code + update database
-	public boolean checkByKeyCode(User input, String emailKey) {
+	public boolean checkByKeyCode(String inputUserId, String emailKey) {
 		// 시간 지난 값들은 db에서 제외하기
 		checkDbDate();
 		
-		System.out.print("EmailService >> checkByKeyCode() >> checking keyCode >> ");
+		System.out.println("EmailService >> checkByKeyCode() >> checking keyCode >> ");
 		
-		Buff buff = db.get(emailKey);
-		if(buff == null || !input.getId().equals(buff.getId())) {
+		String userDbId = db.get(emailKey);
+		if(userDbId == null || !userDbId.equals(inputUserId)) {
 			// 잘못된 key값
-			System.out.println(buff.toString() + input.getId() + buff.getId());
 			return false;
 		}else {
 			// update Db
@@ -91,18 +90,5 @@ public class EmailService { // 서버에 유일한 class로 종속시켜야함 =
 	// 시간 지난 값들은 db에서 제외하기
 	private void checkDbDate() {
 		
-	}
-}
-
-class Buff{
-	private User user;
-	private Date date;
-	
-	Buff(User user){
-		this.user = user;
-		this.date = new Date();
-	}
-	public String getId() {
-		return user.getId();
 	}
 }

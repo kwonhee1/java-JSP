@@ -12,9 +12,9 @@ public class FileService {
 	
 	public FileService() { repository = new FileRepository(); }
 	
-	public int saveFile(String imgURL, Part inputPart) {
+	public int saveFile(String imgURL, Part inputPart, String imgURIFormat) {
 		String inputFileName = getFileName(inputPart);
-		String imgURI = getFilePath(imgURL);
+		String imgURI = getFilePath(imgURL, imgURIFormat);
 		
 		try {
 			inputPart.write(imgURL + imgURI);
@@ -41,13 +41,12 @@ public class FileService {
 		System.out.println("FileService >> removeImg() success uri:"+imgURI);
 	}
 	
-	public int updateImg(String imgURL, int oldImgId, Part inputPart) {
+	public int updateImg(String imgURL, int oldImgId, Part inputPart, String imgURIFormat) {
 		removeImg(imgURL, oldImgId);
-		return saveFile(imgURL, inputPart); // return created new img id
+		return saveFile(imgURL, inputPart, imgURIFormat); // return created new img id
 	}
 	
-	private String getFilePath(String imgURL) {
-		String imgURIFormat = "board%d.png";
+	private String getFilePath(String imgURL, String imgURIFormat) {
 		for(int i = 0; i < 100; i++) {
 			String imgURI = String.format(imgURIFormat, i);
 			File file = new File(imgURL + imgURI);

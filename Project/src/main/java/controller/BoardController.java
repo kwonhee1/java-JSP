@@ -20,7 +20,8 @@ import service.TokenService;
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024*1024, maxRequestSize = 1024*1024*5)
 @WebServlet("/BoardPage/*")
 public class BoardController extends HttpServlet {
-	
+	private static String boardImgURIFormat = "board%d.png";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getPathInfo();
@@ -70,7 +71,7 @@ public class BoardController extends HttpServlet {
         // input img 저장
         Part inputPart = request.getPart("img");
         
-    	int imgId = new FileService().saveFile((String)getServletContext().getAttribute("imgURL"), inputPart);
+    	int imgId = new FileService().saveFile((String)getServletContext().getAttribute("imgURL"), inputPart, boardImgURIFormat);
     	
     	// board 만들기 + get userId
     	Board newBoard = new Board(request.getParameter("title"), request.getParameter("content"));
@@ -96,7 +97,7 @@ public class BoardController extends HttpServlet {
     	// board 만들기 + get userId
     	Board newBoard = new Board(baordId,request.getParameter("title"), request.getParameter("content"));
     	
-    	new BoardService().updateBoard(newBoard, user, (String)getServletContext().getAttribute("imgURL"), inputPart);
+    	new BoardService().updateBoard(newBoard, user, (String)getServletContext().getAttribute("imgURL"), inputPart, boardImgURIFormat);
         
         response.sendRedirect(request.getContextPath() + "/BoardPage");
     }

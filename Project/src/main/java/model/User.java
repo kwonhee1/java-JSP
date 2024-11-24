@@ -1,7 +1,7 @@
 package model;
 
 public class User {
-	private String id, name, passwd, email;
+	private String id, name, passwd, email, imgURI;
 	private String authority; // "user" / "admin"
 	private String key;
 	
@@ -9,6 +9,14 @@ public class User {
 		return authority.equals("admin");
 	}
 	
+	public String getImgURI() {
+		return imgURI;
+	}
+
+	public void setImgURI(String img) {
+		this.imgURI = img;
+	}
+
 	//check id passwd  >> login 
 	public User() {}
 	
@@ -22,12 +30,13 @@ public class User {
 	}
 	
 	//get from DataBase
-	public User(String id, String passwd, String name, String au,String email) {
+	public User(String id, String passwd, String name, String au,String email, String img) {
 		this.id = id;
 		this.passwd = passwd;
 		this.name = name;
 		this.authority = au;
 		this.email = email;
+		this.imgURI = img;
 	}
 
 	public String getId() {
@@ -66,9 +75,11 @@ public class User {
 	public String getKey() {
 		return key;
 	}
+
 	@Override
 	public String toString() {
-	    return "id : " + id + ", passwd : " + passwd + ", name : " + name + ", email : " + email + ", authority : " + authority;
+		return "User [id=" + id + ", name=" + name + ", passwd=" + passwd + ", email=" + email + ", imgURI=" + imgURI
+				+ ", authority=" + authority + ", key=" + key + "]";
 	}
 
 }

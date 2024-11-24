@@ -39,8 +39,8 @@ public class LoginController extends HttpServlet {
 
 		System.out.println(input.getId() + ", " + input.getPasswd() + " Login post() >> check login");
 		
-		Optional<User> user = loginService.isUser(input);
-		if(user.isEmpty()) {
+		User user = loginService.isUser(input);
+		if(user == null) {
 			// login fail => 현재 : adduser
 			System.out.println("login fail return login.jsp + err");
 //			request.setAttribute("err", "login fail");
@@ -50,7 +50,6 @@ public class LoginController extends HttpServlet {
 		}
 		else {
 			// login success
-			input = user.get();
 			
             // session 발급 밑 정보 저장
 			//request.getSession().setAttribute("name", input.getName());
@@ -59,8 +58,8 @@ public class LoginController extends HttpServlet {
 			
 			//token 발급
 			String token = Jwts.builder()
-                    .setSubject(input.getId())
-                    .claim("name", input.getName())
+                    .setSubject(user.getId())
+                    .claim("name", user.getName())
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1시간 유효
                     .signWith(SignatureAlgorithm.HS256, TokenService.getSecretKey())

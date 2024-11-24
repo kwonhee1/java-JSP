@@ -114,7 +114,7 @@
     	    	User user = tokenService.getUserFromToken(request, response);
     	    	if(user != null){
     	%>
-            <span class="username"><%= user.getName() %>님</span>
+            <a href="UserPage"><span class="username"><%= user.getName() %>님</span> </a>
             <div class="username" onClick=eraseCookie()>로그아웃</div>
         <% } else { %>
             <a href="LoginPage">로그인</a>

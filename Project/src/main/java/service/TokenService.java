@@ -20,11 +20,8 @@ public class TokenService {
 	public TokenService() {loginRepository = new LoginRepository(); }
 	
 	public User getUserFromToken(HttpServletRequest request, HttpServletResponse response) {
-		Optional<User> user = loginRepository.getUserById(getUserIdFromToken(request, response)); //User 검증 , User 존재시 true, 없으면 false
-		if(!user.isPresent())
-			return null;
-		
-		return user.get();
+		User user = loginRepository.getUserById(getUserIdFromToken(request, response)); //User 검증 , User 존재시 true, 없으면 false
+		return user;
 	}
 	
 	public String getUserIdFromToken(HttpServletRequest request, HttpServletResponse response) {

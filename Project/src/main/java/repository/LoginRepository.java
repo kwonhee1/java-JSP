@@ -37,23 +37,106 @@ public class LoginRepository extends Repository{
     
     // ID로 사용자 검색
     // SQL: SELECT * FROM user WHERE id = ?;
-    public Optional<User> getUserById(String id) {
-        Optional<User> user = Optional.empty();
+    public User getUserById(String id) {
+        User user = null;
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
         try {
-        	conn = getConnection();
-            PreparedStatement statement = conn.prepareStatement("SELECT * FROM user WHERE id = ?;");
-            statement.setString(1, id);
-            
-            ResultSet rs = statement.executeQuery();
+            // DB 연결
+            conn = getConnection();
+
+            // SQL 쿼리 준비
+            String sql = "SELECT u.id, u.passwd, u.name, u.authority, u.email, i.uri AS img " +
+                         "FROM user u " +
+                         "JOIN img i ON u.imgId = i.id " +
+                         "WHERE u.id = ?";
+            statement = conn.prepareStatement(sql);
+            statement.setString(1, id); // 사용자 ID 매핑
+
+            // 쿼리 실행
+            rs = statement.executeQuery();
+
+            // 결과 처리
             if (rs.next()) {
-                user = Optional.of(new User(rs.getString("id"), rs.getString("passwd"), rs.getString("name"), rs.getString("authority"), rs.getString("email")));  // Fetch email
+                // user 정보를 User 객체로 생성
+                user = new User(
+                    rs.getString("id"),
+                    rs.getString("passwd"),
+                    rs.getString("name"),
+                    rs.getString("authority"),
+                    rs.getString("email"),
+                    rs.getString("img") // 이미지는 img 테이블에서 가져온 uri
+                );
                 System.out.println("LoginRepository >> success getUserById()");
             }
-            
-            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // 리소스 해제
+            disconnect(conn, statement, rs);
         }
+        
         return user;
     }
+
+    
+    public int getImgId(String userId) {
+        int imgId = 0; // 기본값
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            String sql = "SELECT imgId FROM user WHERE id = ?;";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userId);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                imgId = rs.getInt("imgId");
+                System.out.println("getImgId() >> 성공적으로 imgId 조회");
+            }
+        } catch (SQLException e) {
+            System.out.println("getImgId() >> 에러 발생");
+            e.printStackTrace();
+        } finally {
+            disconnect(conn, pstmt, rs);
+        }
+        return imgId;
+    }
+
+
+    public void updateUser(User inputUser, int imgId) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        System.out.println("updateUSer() try update "+inputUser.toString());
+        try {
+            conn = getConnection();
+            String sql = "UPDATE user SET passwd = ?, name = ?, email = ?, imgId = ? WHERE id = ?;";
+            pstmt = conn.prepareStatement(sql);
+
+            // User 객체의 데이터와 imgId를 설정
+            pstmt.setString(1, inputUser.getPasswd());
+            pstmt.setString(2, inputUser.getName());
+            pstmt.setString(3, inputUser.getEmail());
+            pstmt.setInt(4, imgId);
+            pstmt.setString(5, inputUser.getId());
+
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("updateUser() >> success update");
+            } else {
+                System.out.println("updateUser() >> fail update");
+            }
+        } catch (SQLException e) {
+            System.out.println("updateUser() >> error");
+            e.printStackTrace();
+        } finally {
+            disconnect(conn, pstmt);
+        }
+    }
+
 }

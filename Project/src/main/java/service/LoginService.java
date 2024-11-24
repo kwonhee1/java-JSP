@@ -1,7 +1,5 @@
 package service;
 
-import java.util.Optional;
-
 import model.User;
 import repository.LoginRepository;
 
@@ -31,14 +29,14 @@ public class LoginService {
     }
     
     // 로그인 확인
-    public Optional<User> isUser(User input) { 
+    public User isUser(User input) { 
         System.out.println("LoginService >> isUser() >> checking ... ");
 
         // ID로 사용자 정보 조회
-        Optional<User> dbUser = loginRepository.getUserById(input.getId());
+        User dbUser = loginRepository.getUserById(input.getId());
 
         // ID가 존재하고 비밀번호가 일치하는지 확인
-        if(dbUser.isPresent() && dbUser.get().getPasswd().equals(input.getPasswd())) {
+        if(dbUser != null && dbUser.getPasswd().equals(input.getPasswd())) {
             System.out.println("LoginService >> login success");
             return dbUser;
         } else {
@@ -49,6 +47,6 @@ public class LoginService {
     
     // ID 중복 확인
     private boolean checkById(String id){ 
-        return loginRepository.getUserById(id).isPresent();
+        return loginRepository.getUserById(id) != null;
     }
 }

@@ -35,9 +35,14 @@ public class LoginController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		
-		User input = (new ObjectMapper()).readValue(request.getReader().readLine(), User.class);
-
-		System.out.println(input.getId() + ", " + input.getPasswd() + " Login post() >> check login");
+		User input = null;
+		String action = request.getPathInfo();
+		if(action == null || action.isEmpty()){
+			input = (new ObjectMapper()).readValue(request.getReader().readLine(), User.class);
+			System.out.println("Login post() >> check login from javascript Json "+input.toString());
+		} else if(action.substring("/LoginPage".length()).equals("google")) {
+			//input = google();
+		}
 		
 		User user = loginService.isUser(input);
 		if(user == null) {
@@ -47,14 +52,8 @@ public class LoginController extends HttpServlet {
 //			request.getRequestDispatcher("login.jsp").forward(request, response);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("Login fail");
-		}
-		else {
-			// login success
-			
-            // session 발급 밑 정보 저장
-			//request.getSession().setAttribute("name", input.getName());
-			
-			response.setContentType("application/json");
+		} else {
+			System.out.println("loginPage post() >> login success >> publish token");
 			
 			//token 발급
 			String token = Jwts.builder()
@@ -75,7 +74,7 @@ public class LoginController extends HttpServlet {
             // 응답 상태 200 OK
             response.setStatus(HttpServletResponse.SC_OK);
 			
-            System.out.println("login success => publish token");
+            System.out.println("loginPage post >> publish token success");
 			// send main page
 			//response.sendRedirect("/Project");
 		}

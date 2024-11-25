@@ -5,12 +5,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 <meta charset="UTF-8">
+<meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
 <title>Insert title here</title>
-
-	<!-- jQuery -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
 </head>
 <script>
 	
@@ -35,9 +33,7 @@
 	<div id="err"></div>
 	
 	<br><br>
-	<div class="container">
-		<button class="btn btn-default" onclick="onSignIn">구글인증하기</button>
-	</div>
+	<div class="g-signin2" data-onsuccess="onSignIn">구글 소셜로그인</div>
 	
 	<a href="RegistPage">regist</a>
 	
@@ -69,22 +65,8 @@
     });
 
     function onSignIn(googleUser) {
-    	var access_token = googleUser.getAuthResponse().access_token
-    	$.ajax({
-        	// people api를 이용하여 프로필 및 생년월일에 대한 선택동의후 가져온다.
-    		url: 'localhost:8080/Project/LoginPage'
-            // key에 자신의 API 키를 넣습니다.
-    		, data: {personFields:'birthdays', key:'AIzaSyCWaUtyCrFkMdjJxFB9NkIjn0-vJ21dWvQ', 'access_token': access_token}
-    		, method:'GET'
-    	})
-    	.done(function(e){
-            //프로필을 가져온다.
-    		var profile = googleUser.getBasicProfile();
-    		console.log(profile)
-    	})
-    	.fail(function(e){
-    		console.log(e);
-    	})
+    	var google_token = googleUser.getAuthResponse().id_token;
+    	// server back 으로 token값을 넘김 url : LoginPage/google / post방식
     }
 	</script>
 </body>

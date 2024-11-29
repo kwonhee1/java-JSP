@@ -8,7 +8,7 @@
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <meta charset="UTF-8">
 <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
-<title>Insert title here</title>
+<title>Login 페이지</title>
 </head>
 <script>
 	
@@ -24,37 +24,119 @@
 
 
 </script>
+<style>
+        /* 기본 스타일 */
+        body {
+            margin: 0;
+            font-family: 'Black han Sans', serif;
+            background: url('img/1-11.jpg');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            width: 320px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .login-container h1 {
+            font-size: 35px;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #333;
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .social-login a {
+            display: inline-block;
+            width: 48%;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .kakao-login {
+            background-color: #FFEB00;
+            color: #000000;
+        }
+
+        .naver-login {
+            background-color: #03C75A;
+        }
+        
+        .google-login {
+        	background-color: turquoise;
+        }
+        
+        .regist-container {
+        	width: 97%;
+            padding: 5px;
+            background-color: #000;
+            color: #fff;
+            border-radius: 5px;
+            align-items: center;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
 <body>
-	<div class="login-container">
+    <div class="login-container">
         <h1>로그인</h1>
         <form>
             <input type="text" placeholder="ID" required>
             <input type="password" placeholder="비밀번호" required>
             <button type="submit">로그인</button>
         </form>
-
-	<form method="post" action="LoginPage" id="login-form">
-		id : <input type="text" name="id" id="id"> <br>
-		passwd : <input type="password" name="passwd" id="passwd"> <br>
-		<button type="submit">로그인</button>
-	</form>
-
-		<div class="social-login">
-	        <a href="#" class="kakao-login">카카오 로그인</a>
-                <a href="#" class="naver-login">네이버 로그인</a>
-                </div>
+        <div class="social-login">
+            <a href="errorpage.jsp" class="kakao-login">카카오 로그인</a>
+            <a href="#" class="naver-login">네이버 로그인</a>
+            <a href="#" class="google-login">구글 로그인</a>
         </div>
-
-	<div id="err"></div>
-	
-	<br><br>
-	<div class="g-signin2" data-onsuccess="onSignIn">구글 소셜로그인</div>
-	<div class="social-login">
-	        <a href="#" class="kakao-login">카카오 로그인</a>
-                <a href="#" class="naver-login">네이버 로그인</a>
+        <div class="regist-container">
+        	<a href="regist.jsp"> 회원가입(여기로!!)</a>
         </div>
-
-	<a href="RegistPage">regist</a>
+    </div>
+</body>
 	<script>
 	// 로그인 폼을 비동기로 처리하는 함수
     document.getElementById('login-form').addEventListener('submit', async function(event) {

@@ -117,8 +117,8 @@
             <a href="UserPage"><span class="username"><%= user.getName() %>님</span> </a>
             <div class="username" onClick=eraseCookie()>로그아웃</div>
         <% } else { %>
-            <a href="LoginPage">로그인</a>
-            <a href="RegistPage">회원가입</a>
+            <a href="login.jsp">로그인</a>
+            <a href="regist.jsp">회원가입</a>
         <% } 
         %>
     </header>

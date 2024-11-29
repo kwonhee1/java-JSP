@@ -4,22 +4,28 @@ import java.sql.Timestamp;
 
 //게시글 클래스
 public class Board {
- private int id; // generate created
- private String title;
- private String content;
- private String userName; // String userId
- private String imgURI; // int imgId
- private java.sql.Timestamp createdAt;
+ public int id; // generate created
+ public String title;
+ public String content;
+ public String userName; // String userId
+ public String imgURI; // int imgId
+ public int gymId;
+ public int rate;
+ public java.sql.Timestamp createdAt;
  	public Board() {}
  	
-	public Board(int id, String title, String content) {
+	public Board(int id, String title, String content, int gymId, int rate) {
 		this.id = id;
 		this.title = title;
 		this.content = content;
+		this.gymId = gymId;
+		this.rate = rate;
 	}
-	public Board(String title, String content) {
+	public Board(String title, String content, int gymId, int rate) {
 		this.title = title;
 		this.content = content;
+		this.gymId = gymId;
+		this.rate = rate;
 	}
 	public String getImgURI() {
 		return imgURI;
@@ -58,5 +64,19 @@ public class Board {
 		this.createdAt = createdAt;
 	}
 
- 
+	public int getGymId() {
+		return gymId;
+	}
+
+	public void setGymId(int gymId) {
+		this.gymId = gymId;
+	}
+
+	public int getRate() {
+		return rate;
+	}
+
+	public void setRate(int rate) {
+		this.rate = rate;
+	}
 }

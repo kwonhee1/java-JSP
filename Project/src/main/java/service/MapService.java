@@ -3,6 +3,12 @@ package service;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import model.Gym;
+import repository.MapRepository;
+import repository.Repository;
 
 public class MapService {
 	private JSONService jsonService;
@@ -11,8 +17,25 @@ public class MapService {
 		jsonService = new JSONService();
 	}
 	
-	public String get(String siteCode) {
-		return jsonService.parseJson(getConnection(siteCode));
+	public ArrayList<Gym> getAll(String siteCode) {
+		return new MapRepository().getAvaliableGyms(siteCode);
+	}
+	
+	public void updateAll(HashMap<String, String> siteMap) {
+		MapRepository repository = new MapRepository();
+		siteMap.values().forEach(s->{
+			ArrayList<Gym> lists = jsonService.parseJson(getConnection(s), s);
+			repository.updateAll(lists);
+		});
+	}
+	
+	public void reload(HashMap<String, String> siteMap) {
+		MapRepository repository = new MapRepository();
+		repository.deleteAll();
+		siteMap.values().forEach(s->{
+			ArrayList<Gym> lists = jsonService.parseJson(getConnection(s), s);
+			repository.save(lists);
+		});
 	}
 	
 	private InputStream getConnection(String siteCode) {

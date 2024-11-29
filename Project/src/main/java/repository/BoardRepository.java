@@ -7,149 +7,140 @@ import java.util.ArrayList;
 
 public class BoardRepository extends Repository {
 
-    public ArrayList<Board> getBoardList() {
-        String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.created_at " +
-                     "FROM board b, user u, img i " +
-                     "where b.userId = u.id and i.id = b.imgId";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        ArrayList<Board> boardList = new ArrayList<>();
+	public ArrayList<Board> getBoardList(int gymId) {
+	    String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.rate, b.created_at " +
+	                 "FROM board b " +
+	                 "LEFT JOIN user u ON b.userId = u.id " +
+	                 "LEFT JOIN img i ON b.imgId = i.id " +
+	                 "WHERE b.gymId = ?;";
+	    ArrayList<Board> boardList = new ArrayList<>();
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
+	        pstmt.setInt(1, gymId);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                Board board = new Board();
+	                board.setId(rs.getInt("id"));
+	                board.setTitle(rs.getString("title"));
+	                board.setContent(rs.getString("content"));
+	                board.setUserName(rs.getString("userName"));
+	                board.setImgURI(rs.getString("imgURI"));
+	                board.setRate(rs.getInt("rate"));
+	                board.setCreatedAt(rs.getTimestamp("created_at"));
+	                boardList.add(board);
+	            }
+	        }
+	        System.out.println("BoardRepository >> getBoardList >> success");
+	    } catch (SQLException e) {
+	        System.out.println("BoardRepository >> getBoardList >> fail");
+	        e.printStackTrace();
+	    }
+	    return boardList;
+	}
 
-            while (rs.next()) {
-                Board board = new Board();
-                board.setId(rs.getInt("id"));
-                board.setTitle(rs.getString("title"));
-                board.setContent(rs.getString("content"));
-                board.setUserName(rs.getString("userName")); // User name from user table
-                board.setImgURI(rs.getString("imgURI")); // Image URI from img table
-                board.setCreatedAt(rs.getTimestamp("created_at"));
-                boardList.add(board); // Add to list
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            disconnect(conn, pstmt, rs); // Close resources
-        }
+	public void create(Board board, String userId, Integer imgId) {
+	    String sql = "INSERT INTO board (title, content, userId, imgId, gymId, rate) VALUES (?, ?, ?, ?, ?, ?)";
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        return boardList;
-    }
-    
-    // Create a new board entry in the database
-    public void create(Board board, String userId, int imgId) {
-        String sql = "INSERT INTO board (title, content, userId, imgId) VALUES (?, ?, ?, ?)";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
+	        pstmt.setString(1, board.getTitle());
+	        pstmt.setString(2, board.getContent());
+	        pstmt.setString(3, userId);
+	        if (imgId != null) {
+	            pstmt.setInt(4, imgId);
+	        } else {
+	            pstmt.setNull(4, java.sql.Types.INTEGER);
+	        }
+	        pstmt.setInt(5, board.getGymId());
+	        pstmt.setInt(6, board.getRate());
+	        pstmt.executeUpdate();
+	        System.out.println("BoardRepository >> create >> success");
+	    } catch (SQLException e) {
+	        System.out.println("BoardRepository >> create >> fail");
+	        e.printStackTrace();
+	    }
+	}
 
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, board.getTitle());
-            pstmt.setString(2, board.getContent());
-            pstmt.setString(3, userId); // Assumes userName is the userId
-            pstmt.setInt(4, imgId); // Convert URI to imgId
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            disconnect(conn, pstmt);
-        }
-    }
+	public Board getBoard(int boardId) {
+	    String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.gymId, b.rate, b.created_at " +
+	                 "FROM board b " +
+	                 "LEFT JOIN user u ON b.userId = u.id " +
+	                 "LEFT JOIN img i ON b.imgId = i.id " +
+	                 "WHERE b.id = ?";
+	    Board board = null;
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-    // Retrieve a board object by its ID
-    public Board getBoard(int boardId) {
-        String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.created_at " +
-                     "FROM board b " +
-                     "JOIN user u ON b.userId = u.id " +
-                     "LEFT JOIN img i ON b.imgId = i.id " +
-                     "WHERE b.id = ?";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Board board = null;
+	        pstmt.setInt(1, boardId);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                board = new Board();
+	                board.setId(rs.getInt("id"));
+	                board.setTitle(rs.getString("title"));
+	                board.setContent(rs.getString("content"));
+	                board.setUserName(rs.getString("userName"));
+	                board.setImgURI(rs.getString("imgURI"));
+	                board.setGymId(rs.getInt("gymId"));
+	                board.setRate(rs.getInt("rate"));
+	                board.setCreatedAt(rs.getTimestamp("created_at"));
+	            }
+	        }
+	        System.out.println("BoardRepository >> getBoard >> success");
+	    } catch (SQLException e) {
+	        System.out.println("BoardRepository >> getBoard >> fail");
+	        e.printStackTrace();
+	    }
+	    return board;
+	}
 
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, boardId);
-            rs = pstmt.executeQuery();
+	public void remove(int boardId) {
+	    String sql = "DELETE FROM board WHERE id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            if (rs.next()) {
-                board = new Board();
-                board.setId(rs.getInt("id"));
-                board.setTitle(rs.getString("title"));
-                board.setContent(rs.getString("content"));
-                board.setUserName(rs.getString("userName"));
-                board.setImgURI(rs.getString("imgURI"));
-                board.setCreatedAt(rs.getTimestamp("created_at"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            disconnect(conn, pstmt, rs);
-        }
+	        pstmt.setInt(1, boardId);
+	        pstmt.executeUpdate();
+	        System.out.println("BoardRepository >> remove >> success");
+	    } catch (SQLException e) {
+	        System.out.println("BoardRepository >> remove >> fail");
+	        e.printStackTrace();
+	    }
+	}
 
-        return board;
-    }
+	public boolean update(Board board, String userId, Integer imgId) {
+	    String sql = "UPDATE board SET title = ?, content = ?, userId = ?, imgId = ?, rate = ? WHERE id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-    // Remove a board entry from the database
-    public void remove(int boardId) {
-        String sql = "DELETE FROM board WHERE id = ?";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
+	        pstmt.setString(1, board.getTitle());
+	        pstmt.setString(2, board.getContent());
+	        pstmt.setString(3, userId);
+	        if (imgId != null) {
+	            pstmt.setInt(4, imgId);
+	        } else {
+	            pstmt.setNull(4, java.sql.Types.INTEGER);
+	        }
+	        pstmt.setInt(5, board.getRate());
+	        pstmt.setInt(6, board.getId());
+	        pstmt.executeUpdate();
+	        System.out.println("BoardRepository >> update >> success");
+	        return true;
+	    } catch (SQLException e) {
+	        System.out.println("BoardRepository >> update >> fail");
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
 
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, boardId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            disconnect(conn, pstmt);
-        }
-    }
 
-    // Update a board entry in the database
-    public boolean update(Board board, String userId, int imgId) {
-        String sql = "UPDATE board SET title = ?, content = ?, userId = ?, imgId = ? WHERE id = ?";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, board.getTitle());
-            pstmt.setString(2, board.getContent());
-            pstmt.setString(3, userId);
-            pstmt.setInt(4, imgId);
-            pstmt.setInt(5, board.getId());
-            pstmt.executeUpdate();
-            
-            disconnect(conn, pstmt);
-        } catch (SQLException e) {
-            System.out.println("BoardRepository >> update >> fail" + e.getMessage());
-            disconnect(conn, pstmt);
-            return false;
-        }
-        disconnect(conn, pstmt);
-        System.out.println("BoardRspository >> update >> success");
-        return true;
-    }
-
-    // Retrieve the user ID associated with a specific board ID
     public String getUserIdWithBoardId(int boardId) {
-    	//System.out.println("BoardRepository >> getUserIdWuthBoardId() boardId="+String.valueOf(boardId));
         String sql = "SELECT userId FROM board WHERE id = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         String userId = null;
+
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -158,16 +149,18 @@ public class BoardRepository extends Repository {
 
             if (rs.next()) {
                 userId = rs.getString("userId");
-                System.out.println("BoardRepository > getUserIdWithBoardId() >> success userId =" +userId);
             }
-        } catch (Exception e) {
+            System.out.println("BoardRepository >> getUserIdWithBoardId >> success");
+        } catch (SQLException e) {
+            System.out.println("BoardRepository >> getUserIdWithBoardId >> fail");
             e.printStackTrace();
-        } 
-        disconnect(conn, pstmt, rs);
+        } finally {
+            disconnect(conn, pstmt, rs);
+        }
+
         return userId;
     }
 
-    // Get the image URI associated with a board ID
     public String getImgURIWithBoardId(int boardId) {
         String sql = "SELECT i.uri " +
                      "FROM board b " +
@@ -187,7 +180,9 @@ public class BoardRepository extends Repository {
             if (rs.next()) {
                 imgURI = rs.getString("uri");
             }
+            System.out.println("BoardRepository >> getImgURIWithBoardId >> success");
         } catch (SQLException e) {
+            System.out.println("BoardRepository >> getImgURIWithBoardId >> fail");
             e.printStackTrace();
         } finally {
             disconnect(conn, pstmt, rs);
@@ -195,30 +190,31 @@ public class BoardRepository extends Repository {
 
         return imgURI;
     }
-    
+
     public int getImgIdWithBoardId(int boardId) {
         String sql = "SELECT imgId FROM board WHERE id = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        int imgId = -1; // 기본값으로 -1 설정 (유효하지 않은 경우 반환)
+        int imgId = -1;
 
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, boardId); // boardId 매핑
+            pstmt.setInt(1, boardId);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                imgId = rs.getInt("imgId"); // imgId 가져오기
+                imgId = rs.getInt("imgId");
             }
+            System.out.println("BoardRepository >> getImgIdWithBoardId >> success");
         } catch (SQLException e) {
+            System.out.println("BoardRepository >> getImgIdWithBoardId >> fail");
             e.printStackTrace();
         } finally {
-            disconnect(conn, pstmt, rs); // 자원 해제
+            disconnect(conn, pstmt, rs);
         }
 
         return imgId;
     }
-
 }

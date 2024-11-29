@@ -3,6 +3,8 @@ package controller;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,13 +27,10 @@ public class BoardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getPathInfo();
         System.out.println("BoardPage get() >> action:"+action);
-        
-        if (action == null || action.equals("/")) {
-            // 게시판 목록 페이지로 이동
-        	request.setAttribute("boards", new BoardRepository().getBoardList());       	
-            request.getRequestDispatcher("board/boardMain.jsp").forward(request, response);
-            return;
-        }else if(action.startsWith("/edit/")) {
+        if(action == null)
+        	return;
+        //action = action.substring("BoardPage".length());
+        if(action.startsWith("/edit/")) {
         	// 현재 수정할 페이지의 내용을 jsp에게 넘겨줌
         	int boardId = Integer.parseInt(action.substring(6));
         	Board board = new BoardRepository().getBoard(boardId);
@@ -39,6 +38,19 @@ public class BoardController extends HttpServlet {
         	request.setAttribute("title", board.getTitle());
         	request.setAttribute("content", board.getContent());
         	request.setAttribute("id", (Integer)board.getId());
+        }else {
+        	// 게시판 목록 return
+        	ArrayList<Board> boards = new BoardRepository().getBoardList(Integer.parseInt(action.substring(1)));
+        	//System.out.println("BoardPage >> check index0 : "+boards.get(0).toString());
+        	response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("application/json");
+            
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = objectMapper.writeValueAsString(boards);
+
+            // Write JSON response
+            response.getWriter().write(jsonResponse);
+            return;
         }
         
         request.getRequestDispatcher("/board/boardForm.jsp").forward(request, response);
@@ -73,7 +85,7 @@ public class BoardController extends HttpServlet {
     	int imgId = new FileService().saveFile((String)getServletContext().getAttribute("imgURL"), inputPart);
     	
     	// board 만들기 + get userId
-    	Board newBoard = new Board(request.getParameter("title"), request.getParameter("content"));
+    	Board newBoard = new Board(request.getParameter("title"), request.getParameter("content"),  Integer.parseInt(request.getParameter("gymId")), Integer.parseInt(request.getParameter("rate")));
     	
     	new BoardService().createBoard(newBoard, userId, imgId);
         
@@ -94,7 +106,7 @@ public class BoardController extends HttpServlet {
         Part inputPart = request.getPart("img");
     	
     	// board 만들기 + get userId
-    	Board newBoard = new Board(baordId,request.getParameter("title"), request.getParameter("content"));
+    	Board newBoard = new Board(baordId ,request.getParameter("title"), request.getParameter("content"), Integer.parseInt(request.getParameter("gymId")), Integer.parseInt(request.getParameter("rate")));
     	
     	new BoardService().updateBoard(newBoard, user, (String)getServletContext().getAttribute("imgURL"), inputPart);
         

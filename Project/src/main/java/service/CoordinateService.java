@@ -6,9 +6,11 @@ import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransformFactory;
 import org.locationtech.proj4j.ProjCoordinate;
 
+import model.Gym;
+
 public class CoordinateService {
 	
-	static public String change(String y, String x) {
+	static public String change(String y, String x, Gym gym) {
 		try {
 
 			// CRS 按眉 积己
@@ -41,8 +43,8 @@ public class CoordinateService {
 			// 函券等 谅钎
 			//double x = projCoordinate.x;
 			//double y = projCoordinate.y;
-			System.out.println("Coordinate Service change() ("+ p.y +","+ p.x +")->("+ String.valueOf(p2.y)+","+String.valueOf(p2.x)+")");
-			return String.format("\"x\":\"%s\", \"y\":\"%s\"", p2.x, p2.y);
+			// System.out.println("Coordinate Service change() ("+ p.y +","+ p.x +")->("+ String.valueOf(p2.y)+","+String.valueOf(p2.x)+")");
+			gym.setX(p2.x); gym.setY(p2.y);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

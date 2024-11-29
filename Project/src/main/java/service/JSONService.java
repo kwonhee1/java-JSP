@@ -3,11 +3,14 @@ package service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import model.Gym;
+
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class JSONService {
-    public String parseJson(InputStream inputStream) {
+    public ArrayList<Gym> parseJson(InputStream inputStream, String site) {
     	try {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(inputStream);
@@ -19,21 +22,24 @@ public class JSONService {
             System.out.println("JSONSercvice parseJson() >> topLevelKey : "+ topLevelKey);
             JsonNode rowNode = rootNode.path(topLevelKey).path("row");
 
-            StringBuilder main = new StringBuilder();
-            main.append("[");
-            rowNode
-            .forEach(node->{
-            	System.out.println("JSON parsing >> "+node.toString());
-            	if(node.path("TRDSTATEGBN").asText().equals("01") && !node.path("X").asText().equals(""))
-            		main.append(String.format("{\"name\":\"%s\", \"site\":\"%s\",%s},"
-            				, node.path("BPLCNM").asText(), node.path("RDNWHLADDR").asText().equals("")?node.path("SITEWHLADDR").asText():node.path("RDNWHLADDR").asText()
-            				, CoordinateService.change(node.path("Y").asText(),node.path("X").asText())));
+            ArrayList<Gym> arrayList = new ArrayList<Gym>();
+            
+            rowNode.forEach(node->{
+            	Gym gym;
+            	if(node.path("TRDSTATEGBN").asText().equals("01") && !node.path("X").asText().equals("")) {
+            		gym = new Gym(site, node.path("SITEWHLADDR").asText()
+            				,node.path("RDNWHLADDR").asText(), node.path("BPLCNM").asText(), node.path("TRDSTATEGBN").asText().equals("01"));
+            		CoordinateService.change(node.path("Y").asText(),node.path("X").asText(), gym);
+            		//System.out.println(gym.toString());
+            		arrayList.add(gym);
+            	}
             });
-            return main.deleteCharAt(main.length()-1).append("]").toString();
+            System.out.println(arrayList.get(1).toString());
+            return arrayList;
         }
     	}catch(Exception e) {
     		e.printStackTrace();
     	}
-    	return "error";
+    	return null;
     }
 }

@@ -17,7 +17,7 @@ public class BoardService {
 	}
 	
 	public boolean removeBoard(int boardId, String imgURL, User user) {
-		Board board = repository.getBoard(boardId);
+		//Board board = repository.getBoard(boardId);
 		
 		if(isSameUserId(boardId, user))
 			return false;

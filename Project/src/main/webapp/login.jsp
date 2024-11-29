@@ -25,18 +25,36 @@
 
 </script>
 <body>
+	<div class="login-container">
+        <h1>로그인</h1>
+        <form>
+            <input type="text" placeholder="ID" required>
+            <input type="password" placeholder="비밀번호" required>
+            <button type="submit">로그인</button>
+        </form>
+
 	<form method="post" action="LoginPage" id="login-form">
 		id : <input type="text" name="id" id="id"> <br>
 		passwd : <input type="password" name="passwd" id="passwd"> <br>
 		<button type="submit">로그인</button>
 	</form>
+
+		<div class="social-login">
+	        <a href="#" class="kakao-login">카카오 로그인</a>
+                <a href="#" class="naver-login">네이버 로그인</a>
+                </div>
+        </div>
+
 	<div id="err"></div>
 	
 	<br><br>
 	<div class="g-signin2" data-onsuccess="onSignIn">구글 소셜로그인</div>
-	
+	<div class="social-login">
+	        <a href="#" class="kakao-login">카카오 로그인</a>
+                <a href="#" class="naver-login">네이버 로그인</a>
+        </div>
+
 	<a href="RegistPage">regist</a>
-	
 	<script>
 	// 로그인 폼을 비동기로 처리하는 함수
     document.getElementById('login-form').addEventListener('submit', async function(event) {

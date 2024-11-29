@@ -41,7 +41,7 @@ public class LoginService {
             return dbUser;
         } else {
             System.out.println("LoginService >> login fail");
-            return dbUser;
+            return null;
         }
     }
     

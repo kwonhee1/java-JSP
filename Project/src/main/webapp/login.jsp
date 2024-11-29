@@ -2,12 +2,13 @@
     pageEncoding="UTF-8"%>
 	<%@ page import="service.TokenService" %>
 	<%@ page import="model.User" %>
+	<% String path = request.getContextPath(); %>
 <!DOCTYPE html>
 <html>
 <head>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
-<meta charset="UTF-8">
 <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+<meta charset="UTF-8">
 <title>Login 페이지</title>
 </head>
 <script>
@@ -76,35 +77,6 @@
         .login-container button:hover {
             background-color: #333;
         }
-
-        .social-login {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-
-        .social-login a {
-            display: inline-block;
-            width: 48%;
-            text-align: center;
-            padding: 10px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .kakao-login {
-            background-color: #FFEB00;
-            color: #000000;
-        }
-
-        .naver-login {
-            background-color: #03C75A;
-        }
-        
-        .google-login {
-        	background-color: turquoise;
-        }
         
         .regist-container {
         	width: 97%;
@@ -117,24 +89,27 @@
             cursor: pointer;
             margin-top: 10px;
         }
+        #err {
+            color: red;
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="login-container" id="login-form">
         <h1>로그인</h1>
         <form>
-            <input type="text" placeholder="ID" required>
-            <input type="password" placeholder="비밀번호" required>
+            <input type="text" placeholder="ID" id="id" name="id" required>
+            <input type="password" placeholder="비밀번호" id="passwd" name="passwd" required>
+            <div id="err"></div>
             <button type="submit">로그인</button>
         </form>
+        <br>
         <div class="social-login">
-            <a href="errorpage.jsp" class="kakao-login">카카오 로그인</a>
-            <a href="#" class="naver-login">네이버 로그인</a>
-            <a href="#" class="google-login">구글 로그인</a>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
         </div>
-        <div class="regist-container">
-        	<a href="regist.jsp"> 회원가입(여기로!!)</a>
-        </div>
+        <div class="regist-container" onclick="window.location.href='/Project/RegisterPage';">
+    		회원가입
+		</div>
     </div>
 </body>
 	<script>
@@ -165,9 +140,12 @@
     });
 
     function onSignIn(googleUser) {
-    	var google_token = googleUser.getAuthResponse().id_token;
-    	// server back 으로 token값을 넘김 url : LoginPage/google / post방식
-    }
+    	  var profile = googleUser.getBasicProfile();
+    	  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    	  console.log('Name: ' + profile.getName());
+    	  console.log('Image URL: ' + profile.getImageUrl());
+    	  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    	}
 	</script>
 </body>
 </html>

@@ -3,7 +3,6 @@
 git 명령어 모음집
 ### 작업 하기 전
 ```
-  github에서 sync fork
   git pull origin main
 ```
 ### 작업 후

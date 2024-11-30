@@ -3,7 +3,10 @@ package controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -11,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Gym;
 import repository.BoardRepository;
 import service.BoardService;
 import service.MapService;
@@ -20,10 +24,8 @@ public class MapController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private MapService mapService;
 	
+	// Map 정보르 반환해줌
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//return map.jsp
-		System.out.println("Map get() >> try to get coordinate String from repository + return map.jsp");
-		
 		request.setCharacterEncoding("UTF-8");
 		String site = request.getParameter("site");
 		
@@ -36,10 +38,14 @@ public class MapController extends HttpServlet {
 		//mapRepository = (MapRepository) getServletContext().getAttribute("mapRepository");
 		mapService = new MapService();
 		
-		request.setAttribute("gyms", mapService.getAll(siteCode));
-		//request.setAttribute("baords", null);
+		ArrayList <Gym> gyms = mapService.getAll(siteCode);
 		
-		request.getRequestDispatcher("new.jsp").forward(request, response);
+		ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(gyms);
+
+        // Write JSON response
+        response.getWriter().write(jsonResponse);
+        return ;
 	}
 
 

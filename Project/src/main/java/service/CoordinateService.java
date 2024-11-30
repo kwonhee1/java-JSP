@@ -22,8 +22,8 @@ public class CoordinateService {
 	        CoordinateReferenceSystem crs5186 = crsFactory.createFromParameters("EPSG:2097", epsg2097);
 
 	        // EPSG:3857 (Web Mercator)
-	        //EPSG:4326
-	        String epsg4326 = "+proj=longlat +datum=WGS84 +no_defs";
+	        //EPSG:4326 => 3857로 설정 변경
+	        String epsg4326 = "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs";
 	        CoordinateReferenceSystem crs3857 = crsFactory.createFromParameters("EPSG:4326", epsg4326);
 
 			// 변환할 좌표계 정보 생성

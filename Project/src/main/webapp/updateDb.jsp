@@ -9,12 +9,12 @@
 <body>
 <h1>MapPage</h1>
 
-<form action="MapPage" method="POST">
+<form action="MainPage" method="POST">
     <input type="hidden" name="_method" value="reload" />
     <button type="submit">Map load</button>
 </form>
 
-<form action="MapPage" method="POST">
+<form action="MainPage" method="POST">
     <input type="hidden" name="_method" value="update" />
     <button type="submit">Map update</button>
 </form>

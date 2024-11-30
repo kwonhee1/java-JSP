@@ -5,10 +5,6 @@
 <%@ page import="model.Board" %>
 <%@ page import="model.Gym" %>
 <% String projectContextPath = request.getContextPath(); %>
-<%
-    List<Board> boards = (List<Board>)request.getAttribute("boards");
-    List<Gym> gyms = (List<Gym>)request.getAttribute("gyms");
-%>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -19,26 +15,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map and Board</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            grid-gap: 10px;
-            height: 100vh;
-        }
-        #board {
-            padding: 10px;
-            border: 1px solid #ccc;
-            overflow-y: auto;
-        }
+
+#map-content {
+    display: flex; /* Flexbox로 좌우 배치 */
+    width: 100%;
+    height: 80vh; /* 화면 전체 높이 */
+}
+
+#vmap {
+    width: 70%; /* 맵을 70% 차지 */
+    height: 100%; /* 화면 전체 높이 */
+}
+
+#board {
+    width: 30%; /* 게시판을 30% 차지 */
+    height: 100%; /* 화면 전체 높이 */
+    padding: 0px; /* 내용과 경계 사이 여백 */
+    overflow-y: auto; /* 스크롤 기능 추가 */
+    box-sizing: border-box;
+}
+
         .board-item {
             display: flex;
             flex-direction: column;
             border-bottom: 1px solid #eee;
             margin-bottom: 10px;
-            padding-bottom: 10px;
             cursor: pointer;
         }
         .board-item.collapsed .details {
@@ -76,7 +77,37 @@
     </style>
 </head>
 <body>
+	<div>
+<select id="site" onchange="showGym(this.value)">
+    <option value="구로구" selected>구로구</option>
+    <option value="종로구">종로구</option>
+    <option value="중구">중구</option>
+    <option value="용산구">용산구</option>
+    <option value="성동구">성동구</option>
+    <option value="광진구">광진구</option>
+    <option value="동대문구">동대문구</option>
+    <option value="성북구">성북구</option>
+    <option value="강북구">강북구</option>
+    <option value="도봉구">도봉구</option>
+    <option value="노원구">노원구</option>
+    <option value="은평구">은평구</option>
+    <option value="서대문구">서대문구</option>
+    <option value="마포구">마포구</option>
+    <option value="양천구">양천구</option>
+    <option value="강서구">강서구</option>
+    <option value="금천구">금천구</option>
+    <option value="영등포구">영등포구</option>
+    <option value="동작구">동작구</option>
+    <option value="관악구">관악구</option>
+    <option value="서초구">서초구</option>
+    <option value="강남구">강남구</option>
+    <option value="송파구">송파구</option>
+    <option value="강동구">강동구</option>
+</select>
 
+
+	</div>
+  <div id="map-content">
     <!-- 지도 -->
     <div id="vmap"></div>
 
@@ -91,18 +122,38 @@
         <div id="boards"></div>
         <button onclick="addBoardItem()">게시판 추가</button> 
     </div>
+  </div>
 	<script>
-		var selected;
+		var selected, boards, gyms;
         // 게시판 항목 클릭 시 펼치기/접기
         function toggleDetails(id) {
             const item = document.getElementById(id);
             item.classList.toggle("collapsed");
         }
+        
+     // 서버에서 boards 데이터를 가져와 렌더링하는 함수
+        function showGym(site) {
+    	 console.log(site);
+            fetch("<%=projectContextPath%>/MapPage?site="+site, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+            	gyms = Array.isArray(data) ? data : [data];
+                console.log(data + "\n"+gyms);
+                renderGyms(gyms); // gyms 데이터를 렌더링
+                move(gyms[0].y, gyms[0].x);
+            })
+            .catch(error => {
+                console.error("Error fetching gyms: ", error);
+            });
+        }
 
-        let gyms = []; // 서버에서 받아온 gyms 데이터가 저장될 배열
-
-     // 서버에서 gyms 데이터를 가져와 렌더링하는 함수
-     function showGym(gymId) {
+     // 서버에서 boards 데이터를 가져와 렌더링하는 함수
+     function showBoard(gymId) {
          fetch("<%=projectContextPath%>/BoardPage/"+gymId, {
              method: 'GET',
              headers: {
@@ -112,8 +163,7 @@
          .then(response => response.json())
          .then(data => {
              boards = Array.isArray(data) ? data : [data]; // 데이터가 배열인지 확인 후 처리
-             console.log(data + "\n"+boards);
-             renderGyms(boards); // gyms 데이터를 렌더링
+             renderBoards(boards); // gyms 데이터를 렌더링
          })
          .catch(error => {
              console.error("Error fetching gyms: ", error);
@@ -121,7 +171,7 @@
      }
 
      // Gyms 데이터를 기반으로 화면을 렌더링하는 함수
-     function renderGyms(baords) {
+     function renderBoards(baords) {
          // 2. 게시판에 항목 추가
          const gymInfo = document.getElementById('gym-info');
          const boardsContainer = document.getElementById("boards");
@@ -182,8 +232,7 @@
              stars += "★"; // 별표를 누적
          }
          
-         gymInfo.innerHTML = "<strong>"+selected.name+"</strong><p>구주소 : "+selected.oldAddr+"<br/>도로명 주소 : "+selected.newAddr+"</p>"+
-         	"<strong>총합 평점: </strong>" + stars;
+         gymInfo.innerHTML = "<strong>"+selected.name+" 총합 평점: </strong>" + stars;
          
      }
 
@@ -209,7 +258,8 @@
             interactionDensity: vw.ol3.DensityType.BASIC,
             controlsAutoArrange: true,
             homePosition: vw.ol3.CameraPosition,
-            initPosition: vw.ol3.CameraPosition
+            initPosition: vw.ol3.CameraPosition,
+            epsg: "EPSG:4326"
         };
 
         vmap = new vw.ol3.Map("vmap", vw.ol3.MapOptions);
@@ -221,36 +271,55 @@
         		if (layer != null && layer.className == 'vw.ol3.layer.Marker') {
         			console.log(feature);
         			selected = feature.values_.attr;
-        			showGym(feature.values_.attr.id);
+        			showBoard(feature.values_.attr.id);
         	    } else {
         	    	return false;
         	    }
         	});
        	});
 
-        <% for (int i = 0; i < gyms.size(); i++) { 
-            Gym gym = gyms.get(i);
-        %>
-        	console.log("<%= gym.toString() %>");
-            vw.ol3.markerOption = {
-                x: <%= gym.getX() %>,
-                y: <%= gym.getY() %>,
-                epsg: "EPSG:4326",
-                title: "<%= gym.getName() %>",
-                contents: "<%= gym.getOldAddr() %>",
-                iconUrl: '//map.vworld.kr/images/ol3/marker_blue.png',
-				text: {
-                    offsetX: 0.5,
-                    offsetY: 20,
-                    font: '12px Calibri,sans-serif',
-                    fill: { color: '#000' },
-                    stroke: { color: '#fff', width: 2 },
-                    text: "<%= gym.getName() %>"
-                },
-                attr: { "id": "<%= gym.getId() %>", "name": "<%= gym.getName() %>", "oldAddr":"<%=gym.getOldAddr() %>", "newAddr":"<%=gym.getNewAddr()%>" }
-            };
-            markerLayer.addMarker(vw.ol3.markerOption);
-        <% } %>
+    function renderGyms(gyms) {
+    for (let i = 0; i < gyms.length; i++) {
+        const gym = gyms[i];
+        console.log(gym.toString());
+
+        const markerOption = {
+            x: gym.x,
+            y: gym.y,
+            epsg: "EPSG:3857",
+            title: gym.name,
+            contents: gym.oldAddr,
+            iconUrl: '//map.vworld.kr/images/ol3/marker_blue.png',
+            text: {
+                offsetX: 0.5,
+                offsetY: 20,
+                font: '12px Calibri,sans-serif',
+                fill: { color: '#000' },
+                stroke: { color: '#fff', width: 2 },
+                text: gym.name
+            },
+            attr: {
+                "id": gym.id,
+                "name": gym.name,
+                "oldAddr": gym.oldAddr,
+                "newAddr": gym.newAddr
+            }
+        };
+
+        markerLayer.addMarker(markerOption);
+    }
+}
+        
+        function move(y,x){
+        	var _center = [x,y];
+        	vmap.getView().setCenter(_center);
+        	vmap.getView().setZoom(14)
+        	console.log("map move ", y,x);
+        }
+        
+        window.onload = function() {
+            showGym(document.getElementById("site").value);
+        };
     </script>
 </body>
 </html>

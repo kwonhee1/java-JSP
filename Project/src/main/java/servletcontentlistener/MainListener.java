@@ -35,7 +35,6 @@ public class MainListener implements ServletContextListener {
     
     	// siteCode Map
     	Map<String, String> siteCodeMap = new HashMap<String, String>();
-    	siteCodeMap.put("종로구", "JR");
     	siteCodeMap.put("중구", "JG");
     	siteCodeMap.put("용산구", "YS");
     	siteCodeMap.put("성동구", "SD");

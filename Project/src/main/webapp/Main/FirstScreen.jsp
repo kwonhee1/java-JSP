@@ -48,6 +48,7 @@
         
         .main-content {
     		padding: 60px;    /* 위쪽 여백 120px */\
+    		background-color: rgba(0, 0, 0, 0.3)
 		}
         
         .side {

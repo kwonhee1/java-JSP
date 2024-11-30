@@ -3,6 +3,8 @@ package controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Gym;
 import repository.BoardRepository;
+import repository.MapRepository;
 import service.BoardService;
 import service.MapService;
 
@@ -28,17 +31,22 @@ public class MapController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		String site = request.getParameter("site");
+		String name = request.getParameter("name");
 		
-		if(site == null) {
+		ArrayList<Gym> gyms = null;
+		
+		if(name != null && name.length() >=2 ) {
+			gyms = doSearch(request, response, name);
+		}else {
+			System.out.println("MapPage >> doGet() >> input siteCode ="+site+", return avaliable map datas as json");
+			if(site == null) {
 			// 없으면 기본은 서울로지정
-			site = "구로구";
+				site = "구로구";
+			}
+			String siteCode = ((HashMap<String, String>)getServletContext().getAttribute("siteCodeMap")).get(site);
+			//mapRepository = (MapRepository) getServletContext().getAttribute("mapRepository");
+			gyms = new MapService().getAll(siteCode);
 		}
-		
-		String siteCode = ((HashMap<String, String>)getServletContext().getAttribute("siteCodeMap")).get(site);
-		//mapRepository = (MapRepository) getServletContext().getAttribute("mapRepository");
-		mapService = new MapService();
-		
-		ArrayList <Gym> gyms = mapService.getAll(siteCode);
 		
 		ObjectMapper objectMapper = new ObjectMapper();
         String jsonResponse = objectMapper.writeValueAsString(gyms);
@@ -47,7 +55,6 @@ public class MapController extends HttpServlet {
         response.getWriter().write(jsonResponse);
         return ;
 	}
-
 
 	 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	        // 폼 데이터에서 "_method" 파라미터 읽기
@@ -77,5 +84,23 @@ public class MapController extends HttpServlet {
 	            response.getWriter().write("Invalid method parameter.");
 	        }
 	    }
-
+	 
+	 // map page 정보 수정
+	 protected void doPut() {
+		 
+	 }
+	 
+	 // map page search with gym name (String)
+	 private ArrayList<Gym> doSearch(HttpServletRequest request, HttpServletResponse response, String name) throws ServletException, IOException{
+		 System.out.println("MapPage >> get >> search >> input name : "+name+", return gyms datas as json where name = name");
+		 ArrayList<Gym> gyms = new MapRepository().getGymsWithName(name);
+		 
+		 if(gyms == null) {
+			 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			 return null;
+		 }else {
+			 response.setStatus(HttpServletResponse.SC_OK);
+		     return gyms;
+		 }
+	 }
 }

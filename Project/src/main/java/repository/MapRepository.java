@@ -165,4 +165,42 @@ public class MapRepository extends Repository {
 	    System.out.println("maprepository >> deleteAll success");
 	}
 
+	
+	public ArrayList<Gym> getGymsWithName(String name) {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    ArrayList<Gym> gyms = new ArrayList<>();
+	    String sql = "SELECT * FROM gym WHERE name LIKE ? AND status = true";
+	    
+	    try {
+	        conn = getConnection();
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, "%" + name + "%"); // 부분 일치를 위한 LIKE 조건
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            Gym gym = new Gym();
+	            gym.id = rs.getInt("id");
+	            gym.siteCode = rs.getString("siteCode");
+	            gym.oldAddr = rs.getString("oldAddr");
+	            gym.newAddr = rs.getString("newAddr");
+	            gym.name = rs.getString("name");
+	            gym.x = rs.getDouble("x");
+	            gym.y = rs.getDouble("y");
+	            gym.status = rs.getBoolean("status");
+	            gyms.add(gym);
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("maprepository >> getGymsWithName fail :: no gyms with name containing " + name);
+	        e.printStackTrace();
+	        disconnect(conn, pstmt, rs);
+	        return null;
+	    } 
+	    disconnect(conn, pstmt, rs);
+	    System.out.println("maprepository >> getGymsWithName success count : " + gyms.size());
+	    return gyms;
+	}
+
+
 }

@@ -30,7 +30,7 @@
             background: rgb(0, 0, 0, 0.1);
         }
 
-        header a, header .username {
+        header div, header .username {
             color: white; /* 텍스트 색상 */
             margin-left: 20px; /* 요소 간 간격 */
             text-decoration: none; /* 밑줄 제거 */
@@ -56,7 +56,7 @@
             position: fixed;
             top: 60px; /* 헤더 아래 위치 */
             right: -30%; /* 시작 시 화면 밖으로 숨김 */
-            width: 30%;
+            width: 25%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             z-index: 999;
@@ -102,16 +102,16 @@
 <body>
     <header>
     	<%
-    	TokenService tokenService = new TokenService();
-    	    	User user = tokenService.getUserFromToken(request, response);
-    	    	if(user != null){
+    		TokenService tokenService = new TokenService();
+    	    User user = tokenService.getUserFromToken(request, response);
+    	    if(user != null){
     	%>
     		<a><%= user.getName() %>님</a>
             <img src="<%=projectContextPath + "/images/" + user.getImgURI() %>" alt="my page" onclick="toggleSideMenu()" style="cursor: pointer; width: 30px; height: 30px;" id="myPage">
             <div class="username" onClick=eraseCookie()>로그아웃</div>
         <% } else { %>
-            <a href="login.jsp">로그인</a>
-            <a href="regist.jsp">회원가입</a>
+            <div onClick="toggleSideMenu()">로그인</div>
+            <div>회원 가입</div>
         <% } 
         %>
      <br> <br> <br>
@@ -125,8 +125,13 @@
     
     <div class="side">
         <div class="side-content">
-            <h2>사이드 메뉴</h2>
-            <p>여기에는 추가적인 메뉴나 콘텐츠가 들어갑니다.</p>
+        	<%
+        		if(user == null){
+        			%> <jsp:include page="/login.jsp" /> <%
+        		}else{
+        			%> <%
+        		}
+        	%>
         </div>
     </div>
 

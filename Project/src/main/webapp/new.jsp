@@ -111,6 +111,7 @@
             <option value="송파구">송파구</option>
             <option value="강동구">강동구</option>
         </select>
+         <input type="text" id="search" /> <button onCLick="searchGym()">검색</button>
     </div>
 
     <div id="map-content">
@@ -132,6 +133,29 @@
         function toggleDetails(id) {
             const item = document.getElementById(id);
             item.classList.toggle("collapsed");
+        }
+        
+        function searchGym() {
+        	var name = document.getElementById("search").value;
+        	if(name == null || name < 2){
+        		console.log("검색어를 2글자 이상 입력해 주세요");
+        		return;
+        	}
+            fetch("<%=projectContextPath%>/MapPage?name=" + name, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                gyms = Array.isArray(data) ? data : [data];
+                renderGyms(gyms);
+                move(gyms[0].y, gyms[0].x);
+            })
+            .catch(error => {
+                console.error("Error fetching gyms: ", error);
+            });
         }
 
         function showGym(site) {
@@ -330,7 +354,6 @@
             }
         }
 
-
         function deleteBoardItem(boardItem) {
         	boardItem.remove();
         }
@@ -361,6 +384,7 @@
         });
 
         function renderGyms(gyms) {
+        	markerLayer.removeAllMarker();
             gyms.forEach(function(gym) {
                 const markerOption = {
                     x: gym.x,

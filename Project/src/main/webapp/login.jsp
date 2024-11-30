@@ -1,8 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-	<%@ page import="service.TokenService" %>
-	<%@ page import="model.User" %>
-	<% String path = request.getContextPath(); %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,28 +8,13 @@
 <meta charset="UTF-8">
 <title>Login 페이지</title>
 </head>
-<script>
-	
-	<%// 토큰이 유효한지 확인
-    	TokenService tokenService = new TokenService();
-		User user = tokenService.getUserFromToken(request, response);
-		if(user != null){%>
-			alert("already login")
-			window.location = "/Project/MainPage" //이전 화면으로 되돌리기 변경 필요
-        	<%
-		}
-	%>
-
-
-</script>
 <style>
         /* 기본 스타일 */
-        body {
+         body {
             margin: 0;
             font-family: 'Black han Sans', serif;
             background: url('img/1-11.jpg');
             background-size: cover;
-            display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -42,7 +24,6 @@
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
             padding: 30px;
-            width: 320px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
             text-align: center;
         }

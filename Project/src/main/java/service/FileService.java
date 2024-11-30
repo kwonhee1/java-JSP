@@ -12,8 +12,12 @@ public class FileService {
 	
 	public FileService() { repository = new FileRepository(); }
 	
-	public int saveFile(String imgURL, Part inputPart) {
+	public int saveFile(String imgURL, Part inputPart, int defaultInt) {
 		String inputFileName = getFileName(inputPart);
+		if(inputFileName == null) {
+			System.out.println("File Service >> saveFile() >> no input file name (no file) >> return default img");
+			return defaultInt;
+		}
 		String imgURI = getFilePath(imgURL, inputFileName+"%d.png");
 		try {
 			inputPart.write(imgURL + imgURI);
@@ -40,9 +44,9 @@ public class FileService {
 		System.out.println("FileService >> removeImg() success uri:"+imgURI);
 	}
 	
-	public int updateImg(String imgURL, int oldImgId, Part inputPart) {
+	public int updateImg(String imgURL, int oldImgId, Part inputPart, int defaultInt) {
 		removeImg(imgURL, oldImgId);
-		return saveFile(imgURL, inputPart); // return created new img id
+		return saveFile(imgURL, inputPart, defaultInt); // return created new img id
 	}
 	
 	private String getFilePath(String imgURL, String imgURIFormat) {
@@ -61,7 +65,7 @@ public class FileService {
 	    for (String content : part.getHeader("content-disposition").split(";")) {
 	        if (content.trim().startsWith("filename")) {
 	            String fileName = content.substring(content.indexOf("=") + 2, content.length() - 1);
-	            return fileName.split("\\.")[0]; // .밑에 나머지는 그냥 버림 (대부분 확장자 또는 파일 경로명)
+	            return fileName; // .밑에 나머지는 그냥 버림 (대부분 확장자 또는 파일 경로명)
 	        }
 	    }
 		return null;

@@ -76,8 +76,8 @@
             font-size: 1.2em;
         }
 
-        .summary .stars {
-            color: gold;
+        .stars {
+            color: red;
             font-size: 14px;
             margin-left: 10px;
         }
@@ -127,7 +127,7 @@
     </div>
 
     <script>
-        var selected, boards, gyms;
+        var selected, boards, gyms, starCount = 0;
 
         function toggleDetails(id) {
             const item = document.getElementById(id);
@@ -145,7 +145,6 @@
             .then(response => response.json())
             .then(data => {
                 gyms = Array.isArray(data) ? data : [data];
-                console.log(data + "\n" + gyms);
                 renderGyms(gyms);
                 move(gyms[0].y, gyms[0].x);
             })
@@ -192,21 +191,18 @@
                 }
                 summary.className = "summary";
                 summary.innerHTML =
-                    "<span>" + board.title + "</span> - 작성자: " + board.userName +
-                    " <span class='created-at'>(" + board.createdAt + ")</span>" +
-                    " <span class='stars'>" + stars + "</span>";
+                    "작성자: " + board.userName + 
+                    "<img src='<%=projectContextPath%>/images/" + board.userImgURI + "' alt='user img' style='width: 30px; height: 30px;' /> " +
+                    "<span class='stars'>" + stars + "</span><br>" +
+                    "제목 : " + board.title + " ( " + board.createdAt + " )";
+
 
                 const details = document.createElement("div");
                 details.className = "details";
                 details.style.display = "none";
                 details.innerHTML =
-                    "<p>" + board.content + "</p>" +
-                    "<div>" +
-                    (board.imgURI ? "<img src='<%=projectContextPath%>/images/" + board.imgURI + "' alt='이미지'>" : "이미지 없음") +
-                    "</div>" +
-                    "<button onclick='editBoardItem(" + board.id + ")'>수정</button>" +
-                    "<button onclick='deleteBoardItem(" + board.id + ")'>삭제</button>";
-
+                    "<img src='<%=projectContextPath%>/images/" + board.imgURI + "' alt='이미지' style='width: 200px; height: 150px;'> <br>" +
+                    board.content
                 summary.addEventListener("click", function() {
                     const isCollapsed = boardItem.classList.contains("collapsed");
                     boardItem.classList.toggle("collapsed");
@@ -223,15 +219,120 @@
                 stars += "★";
             }
 
-            gymInfo.innerHTML = "<strong>" + selected.name +"</strong>"+ stars;
+            gymInfo.innerHTML = "<strong>" + selected.name +"</strong> <div class='stars'>"+ stars +"</div><hr>";
         }
 
-        function editBoardItem(boardId) {
-            alert(`Gym ID ${boardId} 수정 기능은 구현 필요.`);
+        function addBoardItem() {
+            const boardsContainer = document.getElementById("boards");
+
+            // Create a new board item
+            const boardItem = document.createElement("div");
+            boardItem.className = "board-item collapsed";
+
+            // Create the summary section
+            const summary = document.createElement("div");
+            summary.className = "summary";
+            summary.innerHTML =
+                "<div id='new-stars'></div><br>" +
+                "제목: <input type='text' placeholder='제목 입력' style='width: 80%;' />";
+
+            // Create the details section
+            const details = document.createElement("div");
+            details.className = "details";
+            details.style.display = "block";
+            details.innerHTML =
+                "<textarea placeholder='내용을 입력하세요' style='width: 90%; height: 100px;'></textarea><br>" +
+                "<label>이미지 업로드: <input type='file' accept='img'></label>";
+
+            // Add buttons for saving or canceling
+            const buttons = document.createElement("div");
+            buttons.className = "buttons";
+            buttons.innerHTML =
+                "<button onclick='saveBoardItem(this)'>저장</button>" +
+                "<button onclick='this.parentElement.parentElement.parentElement.remove()'>취소</button>";
+
+            // Append sections to the board item
+            details.appendChild(buttons);
+            boardItem.appendChild(summary);
+            boardItem.appendChild(details);
+
+            // Append the new board item to the boards container
+            boardsContainer.appendChild(boardItem);
+            
+            starCount = 3;
+            createStar();
+        }
+        function createStar() {
+            // Clear the previous stars
+            const starContainer = document.getElementById("new-stars");
+            starContainer.innerHTML = "";
+
+            // Create the filled stars (based on the current starCount)
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement("span");
+                star.className = "star"; // Add a CSS class for styling
+                star.id = "star-" + i; // Unique ID for each star
+                star.innerHTML = "★"; // Star symbol
+
+                // Set the color of the star based on whether it is selected
+                if (i <= starCount) {
+                    star.style.color = "gold"; // Filled star
+                } else {
+                    star.style.color = "gray"; // Empty star
+                }
+
+                // Add the click event to update the starCount
+                star.onclick = function() {
+                    starCount = i;
+                    createStar(); // Recreate the stars with the new starCount
+                };
+
+                starContainer.appendChild(star); // Append the star to the container
+            }
         }
 
-        function deleteBoardItem(boardId) {
-            alert(`Gym ID ${boardId} 삭제 기능은 구현 필요.`);
+        async function saveBoardItem(button) {
+            const boardItem = button.parentElement.parentElement.parentElement;
+
+            const title = boardItem.querySelector("input[placeholder='제목 입력']").value;
+            const content = boardItem.querySelector("textarea").value;
+            const rate = starCount;
+            const imgFile = boardItem.querySelector("input[type='file']").files[0];
+            const gymId = selected.id;
+            
+            // FormData 생성
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("content", content);
+            formData.append("rate", rate);
+            if(imgFile == undefined)
+            	formData.append("img", null);
+            else
+            	formData.append("img", imgFile);
+            formData.append("gymId", gymId);
+            
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ": " + pair[1]);
+            }
+
+            const response = await fetch("<%=projectContextPath%>/BoardPage", {
+                method: "POST",
+                body: formData, // FormData를 body로 전달
+            });
+            switch(response.status){
+            case 200:
+            	alert('성공');
+            	break;
+            case 400:
+            	alert('로그인이 필요합니다');
+            	boardItem.remove();
+            	break;
+            }
+        }
+
+
+        function deleteBoardItem(boardItem) {
+        	boardItem.remove();
         }
 
         vw.ol3.MapOptions = {

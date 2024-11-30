@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 //게시글 클래스
 public class Board {
@@ -8,10 +9,13 @@ public class Board {
  public String title;
  public String content;
  public String userName; // String userId
+ public String userImgURI;
  public String imgURI; // int imgId
  public int gymId;
  public int rate;
- public java.sql.Timestamp createdAt;
+ public String createdAt;
+ 
+ private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm");
  	public Board() {}
  	
 	public Board(int id, String title, String content, int gymId, int rate) {
@@ -27,6 +31,16 @@ public class Board {
 		this.gymId = gymId;
 		this.rate = rate;
 	}
+	
+	
+	public String getUserImgURI() {
+		return userImgURI;
+	}
+
+	public void setUserImgURI(String userImgURI) {
+		this.userImgURI = userImgURI;
+	}
+
 	public String getImgURI() {
 		return imgURI;
 	}
@@ -57,13 +71,12 @@ public class Board {
 	public void setUserName(String author) {
 		this.userName = author;
 	}
-	public java.sql.Timestamp getCreatedAt() {
+	public String getCreatedAt() {
 		return createdAt;
 	}
 	public void setCreatedAt(java.sql.Timestamp createdAt) {
-		this.createdAt = createdAt;
+		this.createdAt = sdf.format(createdAt);
 	}
-
 	public int getGymId() {
 		return gymId;
 	}

@@ -44,7 +44,7 @@ public class BoardService {
 		
 		int oldImgId = repository.getImgIdWithBoardId(boardId);
 		
-		int newImgId = fileService.updateImg(imgURL, oldImgId, inputPart);
+		int newImgId = fileService.updateImg(imgURL, oldImgId, inputPart, 2);
 		
 		if(!repository.update(board, user.getId(), newImgId)) {
 			System.out.println("BoardService >> updateBoard() >> repository.update() >> fail");

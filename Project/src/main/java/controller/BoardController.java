@@ -73,23 +73,25 @@ public class BoardController extends HttpServlet {
     	//get User from token
         String userId = new TokenService().getUserIdFromToken(request, response);
         if(userId == null || userId.isBlank()) {
-        	System.out.println("no token => return alertPage.jsp");
-        	request.setAttribute("error", "로그인 정보가 없습니다");
-        	request.getRequestDispatcher("alertPage.jsp").forward(request, response);
-        	return ;
+        	System.out.println("no token => return bad request");
+        	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        	return;
         }
         
         // input img 저장
         Part inputPart = request.getPart("img");
-        
-    	int imgId = new FileService().saveFile((String)getServletContext().getAttribute("imgURL"), inputPart);
-    	
+        int imgId = 2;
+        if(inputPart != null) {
+        	imgId = new FileService().saveFile((String)getServletContext().getAttribute("imgURL"), inputPart, 2);
+        }else {
+        	System.out.println("null file");
+        }
     	// board 만들기 + get userId
     	Board newBoard = new Board(request.getParameter("title"), request.getParameter("content"),  Integer.parseInt(request.getParameter("gymId")), Integer.parseInt(request.getParameter("rate")));
     	
     	new BoardService().createBoard(newBoard, userId, imgId);
         
-        response.sendRedirect(request.getContextPath() + "/BoardPage");
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     // update Board

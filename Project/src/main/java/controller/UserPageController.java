@@ -83,7 +83,7 @@ public class UserPageController extends HttpServlet {
 				fileService.removeImg(imgURL, loginRepository.getImgId(oldUser.getId()));
 			}
 			// 새로운 img파일 저장
-			imgId = fileService.saveFile(imgURL, inputPart);
+			imgId = fileService.saveFile(imgURL, inputPart, 1);
 		}else {
 			imgId = loginRepository.getImgId(inputUserId);
 		}

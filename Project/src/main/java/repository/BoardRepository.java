@@ -8,10 +8,11 @@ import java.util.ArrayList;
 public class BoardRepository extends Repository {
 
 	public ArrayList<Board> getBoardList(int gymId) {
-	    String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.rate, b.created_at " +
+	    String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.rate, b.created_at, i2.uri as userImgURI " +
 	                 "FROM board b " +
 	                 "LEFT JOIN user u ON b.userId = u.id " +
 	                 "LEFT JOIN img i ON b.imgId = i.id " +
+	                 "left join img i2 on u.imgId = i2.id "+
 	                 "WHERE b.gymId = ?;";
 	    ArrayList<Board> boardList = new ArrayList<>();
 	    try (Connection conn = getConnection();
@@ -28,6 +29,7 @@ public class BoardRepository extends Repository {
 	                board.setImgURI(rs.getString("imgURI"));
 	                board.setRate(rs.getInt("rate"));
 	                board.setCreatedAt(rs.getTimestamp("created_at"));
+	                board.setUserImgURI(rs.getString("userImgURI"));
 	                boardList.add(board);
 	            }
 	        }
@@ -63,9 +65,8 @@ public class BoardRepository extends Repository {
 	}
 
 	public Board getBoard(int boardId) {
-	    String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.gymId, b.rate, b.created_at " +
+	    String sql = "SELECT b.id, b.title, b.content, i.uri AS imgURI, b.gymId, b.rate, b.created_at " +
 	                 "FROM board b " +
-	                 "LEFT JOIN user u ON b.userId = u.id " +
 	                 "LEFT JOIN img i ON b.imgId = i.id " +
 	                 "WHERE b.id = ?";
 	    Board board = null;
@@ -79,7 +80,6 @@ public class BoardRepository extends Repository {
 	                board.setId(rs.getInt("id"));
 	                board.setTitle(rs.getString("title"));
 	                board.setContent(rs.getString("content"));
-	                board.setUserName(rs.getString("userName"));
 	                board.setImgURI(rs.getString("imgURI"));
 	                board.setGymId(rs.getInt("gymId"));
 	                board.setRate(rs.getInt("rate"));

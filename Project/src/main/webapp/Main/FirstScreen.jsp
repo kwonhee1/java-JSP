@@ -27,6 +27,7 @@
             justify-content: flex-end; /* 오른쪽 정렬 */
             align-items: center; /* 세로 가운데 정렬 */
             z-index: 1000; /* 다른 요소 위에 배치 */
+            background: rgb(0, 0, 0, 0.1);
         }
 
         header a, header .username {

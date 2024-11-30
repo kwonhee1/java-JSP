@@ -38,6 +38,7 @@ public class TokenService {
 			return claims.getSubject();
 		} catch(NullPointerException | NoSuchElementException e) {
 			System.out.println("no token");
+			return null;
 		}catch(Exception e) {
 			//e.printStackTrace();
 			System.out.println("strange token => erase token");

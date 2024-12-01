@@ -1,9 +1,9 @@
 package model;
 
 public class User {
-	private String id, name, passwd, email, imgURI;
-	private String authority; // "user" / "admin"
-	private String key;
+	public String id, name, passwd, email, imgURI;
+	public String authority; // "user" / "admin"
+	public String key;
 	
 	public boolean isAdmin() {
 		return authority.equals("admin");

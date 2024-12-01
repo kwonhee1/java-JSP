@@ -16,7 +16,7 @@ public class Board {
  public String createdAt;
  
  private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm");
- 	public Board() {}
+ 	public Board() {}	
  	
 	public Board(int id, String title, String content, int gymId, int rate) {
 		this.id = id;

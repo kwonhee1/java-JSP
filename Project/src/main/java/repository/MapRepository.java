@@ -39,6 +39,7 @@ public class MapRepository extends Repository {
 	    System.out.println("Maprepository >> save success");
 	}
 	
+	// 새로 생긴 데이터 들은 모두 더함 + 없어진 데이터들은 운영안한 처리
 	public void updateAll(ArrayList<Gym> gyms) {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;

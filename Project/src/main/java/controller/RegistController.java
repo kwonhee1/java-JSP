@@ -34,7 +34,7 @@ public class RegistController extends HttpServlet {
 		loginService = new LoginService();
 		emailService = new EmailService();
 		
-		if(loginService.isUser(input) == null) {
+		if(!loginService.checkById(input.getId())) { // 존재하면 true / 존재하지 않으면 false
 			// 동일 id 없음 => email 발송
 			emailService.sendEmail(input.getId(), input.getEmail());
 			System.out.println("isUser() Empty => send Email + return 200");
@@ -47,24 +47,24 @@ public class RegistController extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		User input = new User(request.getParameter("id"), request.getParameter("passwd"), request.getParameter("name"), request.getParameter("email"));
-		String key = request.getParameter("key");
+		User input = (new ObjectMapper()).readValue(request.getReader().readLine(), User.class);
 		
-		System.out.println(input.getId()+", "+input.getPasswd()+"," +input.getName()+ ","+input.getEmail()+","+key+" Regist post() => check emailKey");
+		System.out.println(input.getId()+", "+input.getPasswd()+"," +input.getName()+ ","+input.getEmail()+","+input.getKey()+" Regist post() => check emailKey");
 		
 		emailService = new EmailService();
 		loginService = new LoginService();
-		if(emailService.checkByKeyCode(input.getId(), key)) {
+		if(emailService.checkByKeyCode(input.getId(), input.getKey())) {
 			// email success => update database + return 200
 			System.out.println("emailKey is success => update database + return 200");
 			loginService.addUser(input);
+			
+			response.setStatus(HttpServletResponse.SC_OK);
+			return;
 		}
 		else {
 			System.out.println("emailKey is not exists => return 400");
-			request.setAttribute("err", "email validate fail try again");
-			request.getRequestDispatcher("RegisterPage").forward(request, response);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return;
 		}
-		
-		request.getRequestDispatcher("LoginPage").forward(request, response);
 	}
 }

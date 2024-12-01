@@ -47,11 +47,10 @@ public class LoginController extends HttpServlet {
 		User user = loginService.isUser(input);
 		if(user == null) {
 			// login fail => 현재 : adduser
-			System.out.println("login fail return login.jsp + err");
+			System.out.println("login fail return bad request");
 //			request.setAttribute("err", "login fail");
 //			request.getRequestDispatcher("login.jsp").forward(request, response);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Login fail");
 		} else {
 			System.out.println("loginPage post() >> login success >> publish token");
 			
@@ -74,7 +73,7 @@ public class LoginController extends HttpServlet {
             // 응답 상태 200 OK
             response.setStatus(HttpServletResponse.SC_OK);
 			
-            System.out.println("loginPage post >> publish token success");
+            System.out.println("loginPage post >> publish token success return 200");
 			// send main page
 			//response.sendRedirect("/Project");
 		}

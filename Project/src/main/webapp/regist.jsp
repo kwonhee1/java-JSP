@@ -6,80 +6,128 @@
     <meta charset="UTF-8">
     <title>회원가입</title>
     <style>
-    	body {
-    		margin: 0;
-            font-family: 'Sans', serif;
-            background: url('img/forest.jpg');
+        /* 기본 스타일 */
+        body {
+            margin: 0;
+            font-family: 'Black han Sans', serif;
             background-size: cover;
-            display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-    	}
-    
-    	.register-container {
-    		background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
             border-radius: 15px;
             padding: 30px;
-            width: 320px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
             text-align: center;
-    	}
-    	
-    	.write-here {
-    		margin-top: 10px;
-    	}
-    	
-    	.email-verify {
-    		margin-top: 10px;
-    	}
-    	
-    	.register-button {
-    		width: 97%;
+        }
+
+        .container h1 {
+            font-size: 35px;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .form input[type="text"],
+        .form input[type="password"],
+        .form input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .container button:hover {
+            background-color: #333;
+        }
+
+        .regist-container {
+            width: 97%;
             padding: 5px;
             background-color: #000;
             color: #fff;
             border-radius: 5px;
-            align-items: center;
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
-    	}
+        }
+
+        #loginEmailKeySection {
+            margin-top: 20px;
+            display: none;
+        }
     </style>
     <script>
-        // 비동기 방식: 인증 이메일 발송
+        // 이메일 발송 비동기 함수
         async function sendEmail(event) {
-            event.preventDefault(); // 기본 폼 제출 방지
-            
-            const id = document.querySelector('input[name="id"]').value;
-            const passwd = document.querySelector('input[name="passwd"]').value;
-            const name = document.querySelector('input[name="name"]').value;
-            const email = document.querySelector('input[name="email"]').value;
-            
-            // 사용자 정보 객체 생성
-            const user = {
-                id: id,
-                passwd: passwd,
-                name: name,
-                email: email
-            };
+            const id = document.getElementById('loginId').value;
+            const email = document.getElementById('loginEmail').value;
+
+            const user = { id, email };
+            console.log(user);
 
             try {
                 const response = await fetch('RegistPage', {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(user)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(user),
                 });
 
                 if (response.ok) {
                     alert('인증 이메일을 발송했습니다. 이메일을 확인하세요.');
-                    document.querySelector('#emailKeySection').style.display = 'block'; // 이메일 키 입력 섹션 표시
-                } else if(response.status === 400){
-                    alert("중복된 id입니다");
+                    document.getElementById('loginEmailKeySection').style.display = 'block';
+                } else if (response.status === 400) {
+                    alert('중복된 ID입니다.');
                 } else {
                     alert('이메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('서버와의 연결에 문제가 발생했습니다.');
+            }
+        }
+
+        async function register(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('loginId').value;
+            const passwd = document.getElementById('loginPasswd').value;
+            const name = document.getElementById('loginName').value;
+            const email = document.getElementById('loginEmail').value;
+            const key = document.getElementById('loginKey').value;
+
+            const user = { id, passwd, name, email, key };
+
+            try {
+                const response = await fetch('RegistPage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(user),
+                });
+
+                if (response.ok) {
+                    alert('회원 가입 성공');
+                    toggleSideMenu2();
+                    toggleSideMenu();
+                } else if (response.status === 400) {
+                    alert('잘못된 인증번호입니다');
+                } else {
+                    alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -89,46 +137,23 @@
     </script>
 </head>
 <body>
-	<div class="register-container">
-    	<h1>회원가입</h1>
-    	<form method="post" action="RegistPage">
-        	<!-- 숨겨진 메소드 값으로 PUT 사용 -->
-        	<input type="hidden" name="_method" value="PUT"/>
-        	
-        	<div class="write-here">
-        	아이디 <br>
-        	<input type="text" placeholder="id" required> <br>
-        	</div>
-        	
-        	<div class="write-here">
-        	비밀번호 <br>
-        	<input type="password" placeholder="passwd" required> <br>
-        	</div>
-        	
-        	<div class="write-here">
-        	이름 <br>
-        	<input type="text" placeholder="이름 입력" required><br>
-        	</div>
-        	
-        	<div class="write-here">
-        	이메일 <br>
-        	<input type="email" placeholder="이메일 입력" required><br>
-        	</div>
-        
-        	<div class="email-verify"> <!-- 인증 이메일 발송 버튼 (onclick으로 이벤트 호출) -->
-        	<button type="button" onclick="sendEmail(event)">인증 이메일 발송</button>
-        	</div>
+    <div class="container">
+        <h1>회원가입</h1>
+        <form method="post" action="RegistPage">
+            <div class="form">
+                <input type="text" id="loginId" placeholder="ID" required><br>
+                <input type="password" id="loginPasswd" placeholder="비밀번호" required><br>
+                <input type="text" id="loginName" placeholder="이름" required><br>
+                <input type="email" id="loginEmail" placeholder="이메일" required><br>
+            </div>
+            <button type="button" onclick="sendEmail(event)">인증 이메일 발송</button>
 
-        	<!-- 이메일 인증 코드 입력 섹션 -->
-        	<div class="register-button" id="emailKeySection" style="display: none;">
-            	<h2>이메일 인증</h2>
-            	인증 코드 : <input type="text" name="key" required> <br>
-            	<!-- 회원가입 처리 버튼 (폼 제출) -->
-            	<button type="submit">회원가입</button>
-        	</div>
-    	</form>
+            <div id="loginEmailKeySection">
+                <h2>이메일 인증</h2>
+                <input type="text" id="loginKey" placeholder="인증 코드" required><br>
+                <button type="button" onclick="register(event)">회원가입</button>
+            </div>
+        </form>
     </div>
-
-    <div>${reqeust.getAttribute("err")}</div>
 </body>
 </html>

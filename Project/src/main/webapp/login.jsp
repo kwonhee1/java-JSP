@@ -13,7 +13,6 @@
          body {
             margin: 0;
             font-family: 'Black han Sans', serif;
-            background: url('img/1-11.jpg');
             background-size: cover;
             justify-content: center;
             align-items: center;
@@ -59,17 +58,6 @@
             background-color: #333;
         }
         
-        .regist-container {
-        	width: 97%;
-            padding: 5px;
-            background-color: #000;
-            color: #fff;
-            border-radius: 5px;
-            align-items: center;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
         #err {
             color: red;
         }
@@ -88,9 +76,6 @@
         <div class="social-login">
             <div class="g-signin2" data-onsuccess="onSignIn"></div>
         </div>
-        <div class="regist-container" onclick="window.location.href='/Project/RegisterPage';">
-    		회원가입
-		</div>
     </div>
 </body>
 	<script>

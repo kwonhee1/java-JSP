@@ -16,9 +16,12 @@ public class User {
 	public void setImgURI(String img) {
 		this.imgURI = img;
 	}
-
-	//check id passwd  >> login 
 	public User() {}
+	//check id passwd  >> login 
+	public User(String id, String email) {
+		this.id = id;
+		this.email = email;
+	}
 	
 	// create User
 	public User(String id, String passwd, String name, String email) {

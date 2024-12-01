@@ -18,24 +18,24 @@
         }
         
     	header {
-            position: fixed; /* 화면에 고정 */
-            top: 0; /* 페이지 최상단에 위치 */
+            position: fixed; 
+            top: 0;
             left: 0;
-            width: 100%; /* 페이지 전체 폭 */\
-            padding: 0px; /* 패딩 추가 */
-            display: flex; /* 가로 정렬 */
-            justify-content: flex-end; /* 오른쪽 정렬 */
-            align-items: center; /* 세로 가운데 정렬 */
-            z-index: 1000; /* 다른 요소 위에 배치 */
+            width: 100%; 
+            padding: 0px; 
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center; 
+            z-index: 1000; 
             background: rgb(0, 0, 0, 0.1);
         }
 
         header div, header .username {
-            color: white; /* 텍스트 색상 */
-            margin-left: 20px; /* 요소 간 간격 */
-            text-decoration: none; /* 밑줄 제거 */
-            font-size: 16px; /* 글자 크기 */
-            cursor: pointer; /* 포인터 커서 */
+            color: white; 
+            margin-left: 20px; 
+            text-decoration: none; 
+            font-size: 16px;
+            cursor: pointer; 
         }
 
         .main-banner {
@@ -48,31 +48,29 @@
         }
         
         .main-content {
-    		padding: 60px;    /* 위쪽 여백 120px */\
+    		padding: 60px;    
     		background-color: rgba(0, 0, 0, 0.3)
 		}
         
         .side {
             position: fixed;
-            top: 60px; /* 헤더 아래 위치 */
-            right: -30%; /* 시작 시 화면 밖으로 숨김 */
+            top: 60px; 
+            right: -30%; 
             width: 25%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
-            z-index: 999;
-            transition: left 0.3s ease; /* 애니메이션 효과 */
+            z-index: 100;
+            transition: left 0.3s ease; 
         }
         .side.open {
-            right: 0; /* 클릭 시 왼쪽으로 30% 영역을 차지 */
+            right: 0; 
         }
 
-        /* 사이드 안의 콘텐츠 */
         .side-content {
             color: white;
-            padding: 20px;
+            padding: 15px;
         }
-
-        /* 메인 배너와 사이드 영역을 겹치게 하기 */
+        
         .main-banner {
             position: relative;
             z-index: 1;
@@ -87,13 +85,17 @@
     	}
     	// 사이드 메뉴 열고 닫기 함수
         function toggleSideMenu() {
-            var sideMenu = document.querySelector('.side');
-            sideMenu.classList.toggle('open'); // 'open' 클래스를 토글하여 왼쪽으로 열리거나 닫히게 함
+            var sideMenu = document.querySelector('#side1');
+            sideMenu.classList.toggle('open'); 
+        }
+    	
+        function toggleSideMenu2() {
+            var sideMenu = document.querySelector('#side2');
+            sideMenu.classList.toggle('open'); 
         }
 
         // 로그아웃 쿠키 삭제 함수
         function eraseCookie() {
-            console.log("clicked");
             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             window.location.reload("true");
         }
@@ -111,7 +113,7 @@
             <div class="username" onClick=eraseCookie()>로그아웃</div>
         <% } else { %>
             <div onClick="toggleSideMenu()">로그인</div>
-            <div>회원 가입</div>
+            <div onClick="toggleSideMenu2()">회원 가입</div>
         <% } 
         %>
      <br> <br> <br>
@@ -123,7 +125,7 @@
     	</div>
     </div>
     
-    <div class="side">
+    <div class="side" id="side1">
         <div class="side-content">
         	<%
         		if(user == null){
@@ -134,6 +136,13 @@
         	%>
         </div>
     </div>
+    
+    <div class="side" id="side2" style="z-index: 101;">
+    	<div class="side-content">
+        	<jsp:include page="/regist.jsp" />
+    	</div>
+	</div>
+
 
 </body>
 </html>

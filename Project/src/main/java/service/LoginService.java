@@ -46,7 +46,7 @@ public class LoginService {
     }
     
     // ID 중복 확인
-    private boolean checkById(String id){ 
+    public boolean checkById(String id){ 
         return loginRepository.getUserById(id) != null;
     }
 }

@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="model.User, model.Gym, model.Board" %>
+
+<%@ page import="model.User" %>
+<%@ page import="model.Gym" %>
+<%@ page import="model.Board" %>
 <%@ page import="java.util.List" %>
 
 <% 

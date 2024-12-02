@@ -7,7 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet("/admin/gym")
+@WebServlet("/admin/user")
 public class AdminUserController extends HttpServlet {
     private LoginService loginService =new LoginService();
 

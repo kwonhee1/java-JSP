@@ -107,6 +107,20 @@ public class BoardRepository extends Repository {
 	        e.printStackTrace();
 	    }
 	}
+	
+	// 게시글 삭제
+	public void deleteBoard(int boardId) {
+	    String sql = "DELETE FROM board WHERE id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setInt(1, boardId);
+	        pstmt.executeUpdate();
+	        System.out.println("BoardRepository >> deleteBoard >> success");
+	    } catch (SQLException e) {
+	        System.out.println("BoardRepository >> deleteBoard >> fail");
+	        e.printStackTrace();
+	    }
+	}
 
 	public boolean update(Board board, String userId, Integer imgId) {
 	    String sql = "UPDATE board SET title = ?, content = ?, userId = ?, imgId = ?, rate = ? WHERE id = ?";

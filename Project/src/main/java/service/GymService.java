@@ -1,7 +1,6 @@
 package service;
 
 import model.Gym;
-import repository.GymRepository;
 import java.util.List;
 
 public class GymService {

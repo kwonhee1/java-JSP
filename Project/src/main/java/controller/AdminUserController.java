@@ -1,17 +1,15 @@
-package controller.admin;
+package controller;
 
 import service.LoginService;
 import model.User;
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
+@WebServlet("/admin/gym")
 public class AdminUserController extends HttpServlet {
-    private LoginService loginService;
-
-    public AdminUserController() {
-        loginService = new LoginService();
-    }
+    private LoginService loginService =new LoginService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -22,17 +20,22 @@ public class AdminUserController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if ("delete".equals(action)) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            loginService.deleteUser(userId);  // 삭제 로직 추가
-            response.sendRedirect("/admin/userList");
-        } else if ("update".equals(action)) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            String newName = request.getParameter("name");
-            String newEmail = request.getParameter("email");
-            loginService.updateUser(userId, newName, newEmail);  // 유저 정보 업데이트
-            response.sendRedirect("/admin/userList");
-        }
+    	
+    }
+    
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	int userId = Integer.parseInt(request.getParameter("userId"));
+        String newName = request.getParameter("name");
+        String newEmail = request.getParameter("email");
+        loginService.updateUser(userId, newName, newEmail);  // 유저 정보 업데이트
+        response.sendRedirect("/admin/userList");
+    }
+    
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	int userId = Integer.parseInt(request.getParameter("userId"));
+        loginService.deleteUser(userId);  // 삭제 로직 추가
+        response.sendRedirect("/admin/userList");
     }
 }

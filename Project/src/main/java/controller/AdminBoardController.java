@@ -26,8 +26,10 @@ public class AdminBoardController {
                 board.setTitle(newTitle);
                 board.setContent(newContent);
                 boardRepository.updateBoard(board);
+                response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().println("Board updated successfully.");
             } else {
+            	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().println("Board not found.");
             }
         } catch (Exception e) {

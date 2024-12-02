@@ -1,10 +1,12 @@
 package service;
 
 import model.Gym;
+import repository.MapRepository;
+
 import java.util.List;
 
 public class GymService {
-    private final GymRepository gymRepository = new GymRepository();
+    private final MapRepository gymRepository = new MapRepository();
 
     // 모든 헬스장 가져오기
     public List<Gym> getAllGyms() {

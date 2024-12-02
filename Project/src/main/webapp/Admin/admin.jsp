@@ -47,7 +47,7 @@
     <input type="text" name="gymName" placeholder="헬스장 이름 검색">
     <button type="submit" name="action" value="searchGym">검색</button>
 </form>
-thrh
+
 <h2>헬스장 목록</h2>
 <% if (gymList != null && !gymList.isEmpty()) { %>
     <form action="<%= path %>/admin/dashboard" method="post">

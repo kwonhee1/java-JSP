@@ -2,11 +2,13 @@ package controller;
 
 import java.util.List;
 
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Board;
 import repository.BoardRepository;
 
+@WebServlet("/admin/board")
 public class AdminBoardController {
     private BoardRepository boardRepository;
 

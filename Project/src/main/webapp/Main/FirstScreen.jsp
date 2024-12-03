@@ -131,7 +131,7 @@
         		if(user == null){
         			%> <jsp:include page="/login.jsp" /> <%
         		}else{
-        			%> <jsp:include page="/login.jsp" >  </jsp:include> <%
+        			%>  <%
         		}
         	%>
         </div>

@@ -1,5 +1,6 @@
 package controller;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import service.LoginService;
@@ -13,8 +14,6 @@ public class AdminUserController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("userList", loginService.getAllUsers());  // 로그인 서비스에서 모든 사용자 조회
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/admin/userList.jsp");
-        dispatcher.forward(request, response);
     }
 
     @Override

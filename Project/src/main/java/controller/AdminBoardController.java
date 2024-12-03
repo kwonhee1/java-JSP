@@ -2,11 +2,13 @@ package controller;
 
 import java.util.List;
 
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Board;
 import repository.BoardRepository;
 
+@WebServlet("/admin/board")
 public class AdminBoardController {
     private BoardRepository boardRepository;
 
@@ -26,8 +28,10 @@ public class AdminBoardController {
                 board.setTitle(newTitle);
                 board.setContent(newContent);
                 boardRepository.updateBoard(board);
+                response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().println("Board updated successfully.");
             } else {
+            	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().println("Board not found.");
             }
         } catch (Exception e) {
@@ -35,7 +39,7 @@ public class AdminBoardController {
         }
     }
 
-    // 모든 Boards 검색
+    // 모든 Boards 검색s
     public void getAllBoards(HttpServletRequest request, HttpServletResponse response) {
         try {
             List<Board> boards = boardRepository.getAllBoards();

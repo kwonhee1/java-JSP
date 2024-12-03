@@ -45,6 +45,10 @@ public class FileService {
 	}
 	
 	public int updateImg(String imgURL, int oldImgId, Part inputPart, int defaultInt) {
+		if(inputPart == null) {
+			// no update img
+			return oldImgId;
+		}
 		removeImg(imgURL, oldImgId);
 		return saveFile(imgURL, inputPart, defaultInt); // return created new img id
 	}

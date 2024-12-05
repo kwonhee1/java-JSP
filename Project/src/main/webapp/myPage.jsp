@@ -3,6 +3,8 @@
     <%@ page import="service.TokenService" %>
     <%@ page import="model.User" %>
     <% String projectContextPath = request.getContextPath(); %>
+    <% User user = new TokenService().getUserFromToken(request, response); %>
+    
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,7 +14,6 @@
 	body {
 		background-color: ;
 		position: fixed;
-		display: flex;
 		justify-content: center;
         align-items: center;
 	}
@@ -68,7 +69,7 @@
 <body>
 	<div class="profile-container">
 		<div class="profile-photo">
-			<img src = <%=projectContextPath + "/images/" + user.getImgURI() %>" alt="my page" id="myPage">
+			<img src = <%=projectContextPath + "/images/" + user.getImgURI() %> alt="my page" id="myPage">
 		</div>
 		<div class = "profile-name">
 			<h1><%= user.getName() %>님</h1>

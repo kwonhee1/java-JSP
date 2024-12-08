@@ -111,7 +111,7 @@ public class UserPageController extends HttpServlet {
 		
 		// token의 id와 input된 id값이 동일 해야함
 		// email이 변경되면 다시 인증
-		if(oldUser == null || !oldUser.getId().equals(inputUserId)) {
+		if(oldUser == null || (!oldUser.getId().equals(inputUserId) && !oldUser.isAdmin()) ) {
 			System.out.println("UserPage Put() >> no login or not same user);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;

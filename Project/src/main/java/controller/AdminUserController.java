@@ -12,7 +12,7 @@ import repository.LoginRepository;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/Admin/AdminUser")
+@WebServlet("/AdminUser")
 public class AdminUserController extends HttpServlet {
     private LoginRepository loginRepository = new LoginRepository();
 
@@ -23,52 +23,30 @@ public class AdminUserController extends HttpServlet {
             request.setAttribute("userList", userList);
 
             // 관리자 페이지로 포워딩
-            RequestDispatcher dispatcher = request.getRequestDispatcher("./AdminUser.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("Admin/AdminUser.jsp");
             dispatcher.forward(request, response);
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error retrieving users.");
         }
     }
 
-    // 사용자 수정 (POST 요청 처리)
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userId = request.getParameter("userId");
-        String name = request.getParameter("name");
-        String passwd = request.getParameter("passwd");
-        String email = request.getParameter("email");
 
-        if (userId == null || userId.isEmpty() || name == null || name.isEmpty() ||
-            passwd == null || passwd.isEmpty() || email == null || email.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing or invalid user parameters.");
-            return;
-        }
+        // userId로 해당 사용자 정보를 가져오기
+        User user = (new LoginRepository()).getUserById(userId);
 
-        try {
-            User user = loginRepository.getUserById(userId);
-            if (user == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
-                return;
-            }
+        // 디버깅용 출력: user 정보 확인
+        System.out.println("Retrieved User: " + (user != null ? user.toString() : "User not found"));
 
-            int imgId = loginRepository.getImgId(userId); // 이미지는 별도로 가져오기
+        // request에 사용자 정보 설정
+        request.setAttribute("user", user);
 
-            user.setName(name);
-            user.setPasswd(passwd);
-            user.setEmail(email);
-            
+        // 디버깅용 출력: 포워딩 직전
+        System.out.println("Forwarding to user.jsp with user data.");
 
-            loginRepository.updateUser(user, imgId); // 사용자 정보 업데이트
-
-            // 사용자 목록을 다시 가져와서 화면에 표시
-            List<User> userList = loginRepository.getAllUsers();
-            request.setAttribute("userList", userList);
-
-            // 수정 후 관리자 페이지로 포워딩
-            RequestDispatcher dispatcher = request.getRequestDispatcher("./AdminUser.jsp");
-            dispatcher.forward(request, response);
-        } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error updating user.");
-        }
+        // user.jsp로 포워딩
+        RequestDispatcher dispatcher = request.getRequestDispatcher("user.jsp");
+        dispatcher.forward(request, response);
     }
-    
 }

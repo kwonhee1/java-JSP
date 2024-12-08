@@ -12,7 +12,7 @@ import service.GymService;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/Admin/AdminGym")
+@WebServlet("/AdminGym")
 public class AdminGymController extends HttpServlet {
     private GymService gymService = new GymService();
 

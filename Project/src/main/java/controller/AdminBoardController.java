@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import repository.BoardRepository;
 import model.Board;
 
-@WebServlet("/Admin/AdminBoard")
+@WebServlet("/AdminBoard")
 public class AdminBoardController extends HttpServlet {
 
     private BoardRepository boardRepository = new BoardRepository(); // BoardRepository 인스턴스 생성

@@ -6,6 +6,25 @@
 <head>
     <meta charset="UTF-8">
     <title>사용자 관리</title>
+    <script>
+        // 수정 버튼 클릭 시 해당 사용자의 정보를 서버로 전달하고 user.jsp로 포워딩
+        function editUser(userId) {
+            // Ajax를 이용하여 서버에서 사용자 정보를 가져올 수 있지만, 간단히
+            // form을 이용하여 user.jsp로 포워딩하는 방식으로 구현할 수도 있음.
+            var form = document.createElement("form");
+            form.method = "post";
+            form.action = "./AdminUser";
+            
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "userId";
+            input.value = userId;
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
 </head>
 <body>
     <h1>사용자 관리</h1>
@@ -34,9 +53,8 @@
                             <td><%= user.getPasswd() %></td>
                             <td><%= user.getEmail() %></td>
                             <td><%= user.getKey() != null ? user.getKey() : "전화번호 없음" %></td> <!-- 전화번호가 없다면 대체 텍스트 출력 -->
-                            <td><a href="./AdminUser?userId=<%= user.getId() %>">수정</a></td>
+                            <td><button type="button" onclick="editUser('<%= user.getId() %>')">수정</button></td>
                             <td><a href="./DeleteUser?userId=<%= user.getId() %>">삭제</a></td>
-                           
                         </tr>
             <%
                     }

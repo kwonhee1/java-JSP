@@ -107,11 +107,12 @@ public class UserPageController extends HttpServlet {
 		
 		User oldUser = new TokenService().getUserFromToken(request, response);
 		
-		System.out.print("UserPage put() new user (id,email)=("+inputUserId +","+inputUserEmail+") old=("+oldUser.getId()+","+oldUser.getEmail()+")");
+		System.out.println("UserPage put() >> input user (id,email)=("+inputUserId +","+inputUserEmail+") old=("+oldUser.getId()+","+oldUser.getEmail()+")");
 		
 		// token의 id와 input된 id값이 동일 해야함
 		// email이 변경되면 다시 인증
 		if(oldUser == null || !oldUser.getId().equals(inputUserId)) {
+			System.out.println("UserPage Put() >> no login or not same user);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}

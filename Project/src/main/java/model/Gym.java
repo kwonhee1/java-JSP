@@ -93,4 +93,8 @@ public class Gym {
 		return "Gym [pk=" + id + ", siteCode=" + siteCode + ", oldAddr=" + oldAddr + ", newAddr=" + newAddr + ", name="
 				+ name + ", y=" + y + ", x=" + x + "]";
 	}
+	public void setStatus(String string) {
+		// TODO Auto-generated method stub
+		
+	}
 }

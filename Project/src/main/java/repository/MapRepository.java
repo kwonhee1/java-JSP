@@ -203,5 +203,10 @@ public class MapRepository extends Repository {
 	    return gyms;
 	}
 
+	public void updateGymStatus(int gymId, boolean status) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

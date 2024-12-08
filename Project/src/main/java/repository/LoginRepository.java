@@ -4,12 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
-
+import java.util.ArrayList;
+import java.util.List;
 import model.User;
 
-public class LoginRepository extends Repository{
+public class LoginRepository extends Repository {
     private Connection conn;
+
     // 회원 추가
     // SQL: INSERT INTO user (id, passwd, name, authority, email) VALUES (?, ?, ?, ?, ?);
     public boolean addUser(User user) {
@@ -139,4 +140,43 @@ public class LoginRepository extends Repository{
         }
     }
 
-}
+
+        // 모든 사용자 정보 조회
+        public List<User> getAllUsers() {
+            List<User> userList = new ArrayList<>();
+            Connection conn = null;
+            PreparedStatement pstmt = null;
+            ResultSet rs = null;
+
+            try {
+                conn = getConnection();
+                // 모든 사용자 정보 조회 쿼리
+                String sql = "SELECT u.id, u.passwd, u.name, u.authority, u.email, i.uri AS img " +
+                             "FROM user u " +
+                             "LEFT JOIN img i ON u.imgId = i.id";
+                pstmt = conn.prepareStatement(sql);
+
+                rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    User user = new User(
+                        rs.getString("id"),
+                        rs.getString("passwd"),
+                        rs.getString("name"),
+                        rs.getString("authority"),
+                        rs.getString("email"),
+                        rs.getString("img")
+                    );
+                    userList.add(user);
+                }
+                System.out.println("getAllUsers() >> Successfully retrieved all users");
+            } catch (SQLException e) {
+                System.out.println("getAllUsers() >> Error occurred");
+                e.printStackTrace();
+            } finally {
+                disconnect(conn, pstmt, rs);
+            }
+
+            return userList;
+        }
+    }
+

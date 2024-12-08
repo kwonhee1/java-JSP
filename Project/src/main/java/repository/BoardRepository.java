@@ -40,6 +40,7 @@ public class BoardRepository extends Repository {
 	    }
 	    return boardList;
 	}
+	
 
 	public void create(Board board, String userId, Integer imgId) {
 	    String sql = "INSERT INTO board (title, content, userId, imgId, gymId, rate) VALUES (?, ?, ?, ?, ?, ?)";

@@ -3,6 +3,11 @@
 <%
     // User 데이터를 가져오기 위한 코드 (예시)
     User user = (new service.TokenService()).getUserFromToken(request, response);
+	User reUser = (User)request.getAttribute("user");
+	if(reUser != null){
+		out.println("console.log('admin login');");
+		user = reUser;
+	}
 	if(user!=null){
 %>
 <% String projectContextPath = request.getContextPath(); %>

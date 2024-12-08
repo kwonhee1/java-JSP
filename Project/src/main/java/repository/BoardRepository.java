@@ -40,6 +40,38 @@ public class BoardRepository extends Repository {
 	    }
 	    return boardList;
 	}
+	
+	public ArrayList<Board> getAllBoardList() {
+	    String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.rate, b.created_at, i2.uri as userImgURI " +
+	                 "FROM board b " +
+	                 "LEFT JOIN user u ON b.userId = u.id " +
+	                 "LEFT JOIN img i ON b.imgId = i.id " +
+	                 "left join img i2 on u.imgId = i2.id;";
+	    ArrayList<Board> boardList = new ArrayList<>();
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                Board board = new Board();
+	                board.setId(rs.getInt("id"));
+	                board.setTitle(rs.getString("title"));
+	                board.setContent(rs.getString("content"));
+	                board.setUserName(rs.getString("userName"));
+	                board.setImgURI(rs.getString("imgURI"));
+	                board.setRate(rs.getInt("rate"));
+	                board.setCreatedAt(rs.getTimestamp("created_at"));
+	                board.setUserImgURI(rs.getString("userImgURI"));
+	                boardList.add(board);
+	            }
+	        }
+	        System.out.println("BoardRepository >> getAllBoardList >> success");
+	    } catch (SQLException e) {
+	        System.out.println("BoardRepository >> getAllBoardList >> fail");
+	        e.printStackTrace();
+	    }
+	    return boardList;
+	}
 
 	public void create(Board board, String userId, Integer imgId) {
 	    String sql = "INSERT INTO board (title, content, userId, imgId, gymId, rate) VALUES (?, ?, ?, ?, ?, ?)";

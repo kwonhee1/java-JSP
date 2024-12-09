@@ -1,11 +1,39 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.Board" %>
+<% String projectContextPath = request.getContextPath(); %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>게시판 관리</title>
+    <script>
+    async function deleteBoard(boardId) {
+        try {
+            // DELETE 요청을 보냄
+            const response = await fetch("<%=projectContextPath%>/BoardPage/"+boardId, {
+                method: 'DELETE',
+            });
+
+            // 응답 처리
+            switch (response.status) {
+                case 200:
+                    alert("삭제 완료");
+                    showBoard(selected.id); // 삭제 후 게시판 목록 갱신
+                    break;
+                case 404:
+                    alert("작성자가 아닙니다.");
+                    break;
+                default:
+                    alert("서버 오류가 발생했습니다.");
+                    break;
+            }
+        } catch (error) {
+            console.error("Error deleting board item:", error);
+            alert("서버 요청 중 오류가 발생했습니다.");
+        }
+    }
+    </script>
 </head>
 <body>
     <h1>게시판 관리</h1>
@@ -18,6 +46,7 @@
                 <th>작성자</th>
                 <th>작성일</th>
                 <th>수정</th>
+                <td>삭제</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +62,7 @@
                             <td><%= board.getUserName() %></td>
                             <td><%= board.getCreatedAt() %></td>
                             <td><a href="./AdminBoard?boardId=<%= board.getId() %>">수정</a></td>
+                            <td><button onclick="deleteBoard(<%=board.getId()%>)">삭제</button></td>
                         </tr>
             <%
                     }

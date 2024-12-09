@@ -98,12 +98,14 @@ public class BoardController extends HttpServlet {
     // delete Board
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       System.out.println("Board delete(delete) >> get boardId, userId form token check same id and try delete Board");
+    	String action = request.getPathInfo(); // /Project/BoardPage/3
+    	System.out.println("Board delete(delete) "+action+">> get boardId, userId form token check same id and try delete Board");
        
        User inputUser = new TokenService().getUserFromToken(request, response);
        
-       String action = request.getPathInfo(); // /Project/BoardPage/3
        int boardId = Integer.parseInt(action.substring(1));// 해당 부분 수정 필요 url에서 get하는 방식으로
+       
+       // 삭제할 사람 확인 : 404
        
        new BoardService().removeBoard(boardId, (String)getServletContext().getAttribute("imgURL"), inputUser);
        

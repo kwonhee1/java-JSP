@@ -113,6 +113,40 @@ public class MapRepository extends Repository {
 	}
 
 
+	public ArrayList<Gym> getAllGyms() {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    ArrayList<Gym> gyms = new ArrayList<>();
+	    String sql = "SELECT * FROM gym";
+	    
+	    try {
+	        conn = getConnection();
+	        pstmt = conn.prepareStatement(sql);
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            Gym gym = new Gym();
+	            gym.id = rs.getInt("id");
+	            gym.siteCode = rs.getString("siteCode");
+	            gym.oldAddr = rs.getString("oldAddr");
+	            gym.newAddr = rs.getString("newAddr");
+	            gym.name = rs.getString("name");
+	            gym.x = rs.getDouble("x");
+	            gym.y = rs.getDouble("y");
+	            gym.status = rs.getBoolean("status");
+	            gyms.add(gym);
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("maprepository >> getAllGyms fail :: cannot retrieve gyms");
+	        e.printStackTrace();
+	    } finally {
+	        disconnect(conn, pstmt, rs);
+	    }
+	    System.out.println("maprepository >> getAllGyms success");
+	    return gyms;
+	}
+	
 	public ArrayList<Gym> getAvaliableGyms(String siteCode) {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
@@ -146,7 +180,6 @@ public class MapRepository extends Repository {
 	    System.out.println("maprepository >> getAvaliableGyms success");
 	    return gyms;
 	}
-
 	
 	public void deleteAll() {
 	    Connection conn = null;

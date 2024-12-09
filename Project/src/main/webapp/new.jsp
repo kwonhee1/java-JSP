@@ -296,6 +296,32 @@
             alert("서버 요청 중 오류가 발생했습니다.");
         }
     }
+    
+    async function deleteBoard(boardId) {
+        try {
+            // DELETE 요청을 보냄
+            const response = await fetch("<%=projectContextPath%>/BoardPage/"+boardId, {
+                method: 'DELETE',
+            });
+
+            // 응답 처리
+            switch (response.status) {
+                case 200:
+                    alert("삭제 완료");
+                    showBoard(selected.id); // 삭제 후 게시판 목록 갱신
+                    break;
+                case 404:
+                    alert("작성자가 아닙니다.");
+                    break;
+                default:
+                    alert("서버 오류가 발생했습니다.");
+                    break;
+            }
+        } catch (error) {
+            console.error("Error deleting board item:", error);
+            alert("서버 요청 중 오류가 발생했습니다.");
+        }
+    }
 
     function renderBoards(boards) {
         const gymInfo = document.getElementById('gym-info');
@@ -329,7 +355,8 @@
             details.innerHTML =
                 "<img src='<%=projectContextPath%>/images/" + board.imgURI + "' alt='이미지' style='width: 200px; height: 150px;'> <br>" +
                 board.content +
-                "<br> <button onclick='modifyBoardItem(" + board.id + ")'>수정</button>"
+                "<br> <button onclick='modifyBoardItem(" + board.id + ")'>수정</button>" +
+                "<button onclick='deleteBoard("+board.id+")'>삭제</button>"
             summary.addEventListener("click", function () {
                 const isCollapsed = boardItem.classList.contains("collapsed");
                 boardItem.classList.toggle("collapsed");

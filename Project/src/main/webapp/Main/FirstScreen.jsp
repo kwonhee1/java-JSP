@@ -108,6 +108,9 @@
     	    User user = tokenService.getUserFromToken(request, response);
     	    if(user != null){
     	%>
+    		<% if(user.isAdmin()) {%>
+    		  <a href="admin.jsp">admin page</a>
+    		<% } %>
     		<a><%= user.getName() %>님</a>
             <img src="<%=projectContextPath + "/images/" + user.getImgURI() %>" alt="my page" onclick="toggleSideMenu()" style="cursor: pointer; width: 30px; height: 30px;" id="myPage">
             <div class="username" onClick=eraseCookie()>로그아웃</div>

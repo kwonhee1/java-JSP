@@ -33,14 +33,14 @@ public class BoardService {
 	
 	public boolean updateBoard(Board board, User user, String imgURL,Part inputPart) {
 		int boardId = board.getId();
-		if(isSameUserId(boardId, user))
-			return false;
 		
 		FileService fileService = new FileService();
 		
 		String oldUserId = repository.getUserIdWithBoardId(boardId);
-		if(!(oldUserId.equals(user.getId()) && user.isAdmin()))
+		if(!user.isAdmin() && !oldUserId.equals(user.getId())) {
+			System.out.println("user id가 일치 하지 않음");
 			return false;
+		}
 		
 		int oldImgId = repository.getImgIdWithBoardId(boardId);
 		

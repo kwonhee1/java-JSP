@@ -87,8 +87,9 @@ public class BoardController extends HttpServlet {
         Part inputPart = request.getPart("img");
         
     	// board 만들기 + get userId
-    	Board newBoard = new Board(boardId ,request.getParameter("title"), request.getParameter("content"), Integer.parseInt(request.getParameter("gymId")), Integer.parseInt(request.getParameter("rate")));
-    	
+        //System.out.println(boardId+request.getParameter("title")+ request.getParameter("content")+String.valueOf(boardId)+","+request.getParameter("rate")+ inputPart.toString());
+    	Board newBoard = new Board(boardId ,request.getParameter("title"), request.getParameter("content"), boardId, Integer.parseInt(request.getParameter("rate")));
+    
     	new BoardService().updateBoard(newBoard, user, (String)getServletContext().getAttribute("imgURL"), inputPart);
         
         response.setStatus(HttpServletResponse.SC_OK);

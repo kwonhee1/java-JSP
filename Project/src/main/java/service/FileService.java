@@ -32,6 +32,9 @@ public class FileService {
 	}
 	
 	public void removeImg(String imgURL, int imgId) {
+		if (imgId == 1 || imgId == 2) // 기본 이미지 삭제 하니 않음
+			return;
+		
 		String imgURI = repository.getURI(imgId);
 		try {
 			File oldImg = new File(imgURI);
@@ -47,6 +50,7 @@ public class FileService {
 	public int updateImg(String imgURL, int oldImgId, Part inputPart, int defaultInt) {
 		if(inputPart == null) {
 			// no update img
+			System.out.println("no input img");
 			return oldImgId;
 		}
 		removeImg(imgURL, oldImgId);

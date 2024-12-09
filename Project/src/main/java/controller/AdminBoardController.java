@@ -23,7 +23,7 @@ public class AdminBoardController extends HttpServlet {
             try {
                 ArrayList<Board> boardList = boardRepository.getAllBoardList();
                 request.setAttribute("boardList", boardList);
-                RequestDispatcher dispatcher = request.getRequestDispatcher("./AdminBoard.jsp");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("Admin/AdminBoard.jsp");
                 dispatcher.forward(request, response);
             } catch (Exception e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to retrieve board list.");
@@ -38,7 +38,7 @@ public class AdminBoardController extends HttpServlet {
             Board board = boardRepository.getBoard(boardId);  // 특정 게시판 데이터 조회
             if (board != null) {
                 request.setAttribute("board", board);
-                RequestDispatcher dispatcher = request.getRequestDispatcher("./AdminBoard.jsp");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("Admin/AdminBoard.jsp");
                 dispatcher.forward(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Board not found.");

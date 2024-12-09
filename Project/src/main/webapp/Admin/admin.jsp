@@ -8,9 +8,9 @@
 <body>
     <h1>관리자 페이지</h1>
     <ul>
-        <li><a href="./AdminBoard">게시판 관리</a></li>
-        <li><a href="./AdminGym">헬스장 관리</a></li>
-        <li><a href="./AdminUser">사용자 관리</a></li>
+        <li><a href="Admin/AdminBoard">게시판 관리</a></li>
+        <li><a href="Admin/AdminGym">헬스장 관리</a></li>
+        <li><a href="Admin/AdminUser">사용자 관리</a></li>
     </ul>
 </body>
 </html>

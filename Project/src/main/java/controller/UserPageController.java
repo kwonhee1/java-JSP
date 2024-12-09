@@ -55,7 +55,7 @@ public class UserPageController extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
 			return;
 		}
-		if(!oldUser.getEmail().equals(inputUserEmail) && !oldUser.isAdmin()) {
+		if(!oldUser.isAdmin() && !oldUser.getEmail().equals(inputUserEmail)) {
 			// email 인증 다시 확인
 			if(!new EmailService().checkByKeyCode(inputUserId, (String)request.getParameter("key"))) {
 				System.out.println("not correct email key => return 400");
@@ -116,7 +116,7 @@ public class UserPageController extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
-		if(!oldUser.getEmail().equals(inputUserEmail) && !oldUser.isAdmin()) {
+		if(!oldUser.isAdmin() && !oldUser.getEmail().equals(inputUserEmail)) {
 			System.out.println("check email agin");
 			// email 인증 다시
 			new EmailService().sendEmail(inputUserId, inputUserEmail);

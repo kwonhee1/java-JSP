@@ -12,5 +12,14 @@
         <li><a href="AdminGym">헬스장 관리</a></li>
         <li><a href="AdminUser">사용자 관리</a></li>
     </ul>
+    <form action="MapPage" method="POST">
+    <input type="hidden" name="_method" value="reload" />
+    <button type="submit">Map load</button>
+</form>
+
+<form action="MapPage" method="POST">
+    <input type="hidden" name="_method" value="update" />
+    <button type="submit">Map update</button>
+</form>
 </body>
 </html>

@@ -6,9 +6,38 @@
 <head>
     <meta charset="UTF-8">
     <title>헬스장 수정</title>
+    <style>
+        /* 제목과 버튼을 같은 줄에 배치 */
+        .header-container {
+            display: flex;
+            align-items: center; /* 세로 가운데 정렬 */
+        }
+        /* 버튼 간격 최소화 */
+        .action-buttons form {
+            display: inline;
+            margin: 0;
+            padding: 0;
+        }
+        .action-buttons button {
+            margin-left: 5px; /* 제목과 버튼 간, 버튼 간 최소 간격 */
+            padding: 5px 10px; /* 버튼 내부 여백 최소화 */
+        }
+    </style>
 </head>
 <body>
-    <h1>헬스장 수정</h1>
+    <div class="header-container">
+        <h1 style="margin: 0;">헬스장 수정</h1>
+        <div class="action-buttons">
+            <form action="MapPage" method="POST">
+                <input type="hidden" name="_method" value="reload" />
+                <button type="submit">Map load</button>
+            </form>
+            <form action="MapPage" method="POST">
+                <input type="hidden" name="_method" value="update" />
+                <button type="submit">Map update</button>
+            </form>
+        </div>
+    </div>
 
     <!-- 헬스장 목록 출력 -->
     <table border="1">
@@ -21,27 +50,20 @@
         </thead>
         <tbody>
             <%
-                // Controller에서 전달된 헬스장 목록 가져오기
                 @SuppressWarnings("unchecked")
                 List<Gym> gymList = (List<Gym>) request.getAttribute("gymList");
 
                 if (gymList != null && !gymList.isEmpty()) {
                     for (Gym gym : gymList) {
-                        // 상태 데이터는 다른 필드로 가정
-                        String gymName = gym.getName(); // 이름 가져오기
-                        String gymStatus =String.valueOf(gym.status);// 요청에서 상태 값 가져오기
+                        String gymName = gym.getName();
+                        String gymStatus = String.valueOf(gym.status);
             %>
             <tr>
-                <!-- 헬스장 이름 출력 -->
                 <td><%= gymName %></td>
-                <!-- 헬스장 상태 출력 -->
-                <td><%= gymStatus%></td>
-                <!-- 수정 폼 -->
+                <td><%= gymStatus %></td>
                 <td>
                     <form action="<%= request.getContextPath() %>/AdminGym" method="post">
-                        <!-- 헬스장 이름 전달 -->
                         <input type="hidden" name="gymName" value="<%= gymName %>">
-                        <!-- 상태 선택 -->
                         <select name="status">
                             <option value="OPEN" <%= "OPEN".equals(gymStatus) ? "selected" : "" %>>OPEN</option>
                             <option value="CLOSED" <%= "CLOSED".equals(gymStatus) ? "selected" : "" %>>CLOSED</option>

@@ -56,7 +56,8 @@
                             <td><%= user.getKey() != null ? user.getKey() : "전화번호 없음" %></td> <!-- 전화번호가 없다면 대체 텍스트 출력 -->
                             <td><button type="button" onclick="editUser('<%= user.getId() %>')">수정</button></td>
                             <td><a href="./DeleteUser?userId=<%= user.getId() %>">삭제</a></td>
-                            <td><%= projectContextPath+"/images/"+user.getImgURI() %>
+                            <td><img src="<%=projectContextPath+"/images/"+user.getImgURI() %>" />
+                            
                         </tr>
             <%
                     }

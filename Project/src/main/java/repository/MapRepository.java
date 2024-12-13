@@ -235,11 +235,65 @@ public class MapRepository extends Repository {
 	    System.out.println("maprepository >> getGymsWithName success count : " + gyms.size());
 	    return gyms;
 	}
-
-	public void updateGymStatus(int gymId, boolean status) {
-		// TODO Auto-generated method stub
-		
+	
+	public Gym getGymAdmin(String name) {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    String sql = "SELECT * FROM gym WHERE name = ?;";
+	    Gym gym = new Gym();
+	    
+	    try {
+	        conn = getConnection();
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, name); // 부분 일치를 위한 LIKE 조건
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            gym.id = rs.getInt("id");
+	            gym.siteCode = rs.getString("siteCode");
+	            gym.oldAddr = rs.getString("oldAddr");
+	            gym.newAddr = rs.getString("newAddr");
+	            gym.name = rs.getString("name");
+	            gym.x = rs.getDouble("x");
+	            gym.y = rs.getDouble("y");
+	            gym.status = rs.getBoolean("status");
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("maprepository >> getGymAdmin fail :: no gyms with name containing " + name);
+	        e.printStackTrace();
+	        disconnect(conn, pstmt, rs);
+	        return null;
+	    } 
+	    disconnect(conn, pstmt, rs);
+	    System.out.println("maprepository >> getGymAdmin success count : " + gym.toString());
+	    return gym;
 	}
 
+	public void updateGymStatus(int gymId,  int status) {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    String sql = "UPDATE gym SET status = ? WHERE id = ?"; // 헬스장 상태 업데이트 쿼리
+
+	    try {
+	        conn = getConnection(); // 데이터베이스 연결
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, status); // 상태 값 설정
+	        pstmt.setInt(2, gymId); // 헬스장 ID 설정
+
+	        int rowsUpdated = pstmt.executeUpdate(); // 쿼리 실행
+
+	        if (rowsUpdated > 0) {
+	            System.out.println("헬스장 상태 업데이트 성공: ID=" + gymId + ", status=" + status);
+	        } else {
+	            System.out.println("헬스장 상태 업데이트 실패: ID=" + gymId + "를 찾을 수 없습니다.");
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("헬스장 상태 업데이트 중 오류 발생");
+	        e.printStackTrace();
+	    } finally {
+	        disconnect(conn, pstmt); // 자원 해제
+	    }
+	}
 
 }

@@ -6,7 +6,6 @@ import jakarta.servlet.http.Part;
 import model.Board;
 import model.User;
 import repository.BoardRepository;
-import repository.FileRepository;
 import repository.LoginRepository;
 
 public class BoardService {

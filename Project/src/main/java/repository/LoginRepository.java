@@ -178,5 +178,38 @@ public class LoginRepository extends Repository {
 
             return userList;
         }
-    }
+        
+        public void remove(String userId) {
+            Connection conn = null;
+            PreparedStatement pstmt = null;
+
+            try {
+                // DB 연결
+                conn = getConnection();
+
+                // 삭제 쿼리 준비
+                String sql = "DELETE FROM user WHERE id = ?;";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, userId);
+
+                // 쿼리 실행
+                int rowsDeleted = pstmt.executeUpdate();
+
+                // 결과 확인
+                if (rowsDeleted > 0) {
+                    System.out.println("remove() >> Successfully removed user with ID: " + userId);
+                } else {
+                    System.out.println("remove() >> No user found with ID: " + userId);
+                }
+            } catch (SQLException e) {
+                System.out.println("remove() >> Error occurred while removing user");
+                e.printStackTrace();
+            } finally {
+                // 리소스 해제
+                disconnect(conn, pstmt);
+            }
+        }
+
+        
+}
 

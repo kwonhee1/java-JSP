@@ -130,6 +130,29 @@ public class UserPageController extends HttpServlet {
 	}
 	
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// 로그인 확인 로그인 없음 400
+		User oldUser = (new TokenService().getUserFromToken(request, response));
+		if(oldUser == null) {
+			response.setStatus(HttpServletResponse.SC_CONFLICT); // 로그인 없음
+			System.out.println("no login");
+			return;
+		}
 		
+		// 객체로 받음
+		User input = (new ObjectMapper()).readValue(request.getReader().readLine(), User.class);
+		
+		// 아이디가 같거나, admin이거나
+		if(!(oldUser.isAdmin() || oldUser.getId().equals(input.getId()))) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
+			System.out.println("not same id or not admin");
+			return;
+		}
+		
+		// 성공 200, 실패 400
+		(new LoginRepository()).remove(input.getId());
+		System.out.println("delete user success :" +input.toString());
+		
+		response.setStatus(HttpServletResponse.SC_OK);
+		return;
 	}
 }

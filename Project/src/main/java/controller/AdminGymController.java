@@ -57,7 +57,7 @@ public class AdminGymController extends HttpServlet {
         System.out.println("doPost() 호출됨");
         
         if (!(new TokenService()).getUserFromToken(request, response).isAdmin()) {
-        	System.out.println("is not  admin");
+        	System.out.println("is not admin");
         	return;
         }
 

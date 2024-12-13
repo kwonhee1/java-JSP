@@ -35,21 +35,37 @@ public class TokenService {
 					.parseClaimsJws(token.get().getValue())
 					.getBody();
 		
-			return claims.getSubject();
-		} catch(NullPointerException | NoSuchElementException e) {
+			String clientIp = claims.get("ip", String.class); // IP 추출
+			String userAgent = claims.get("userAgent", String.class); // User-Agent 추출
+			
+			// 현재 상태와 동일한지 확인
+			if(!(request.getRemoteAddr().equals(clientIp) && request.getHeader("User-Agent").equals(userAgent))) {
+				System.out.println("사용자 정보가 변경됨");
+				eraseCookie(response);
+				return null;
+			}
+			
+			String id = claims.getSubject();
+			System.out.print(" >> userId from token " + id+"\n");
+			return id;
+		} catch(NullPointerException | NoSuchElementException | IllegalArgumentException e) {
 			System.out.println("no token");
 			return null;
 		}catch(Exception e) {
 			//e.printStackTrace();
 			System.out.println("strange token => erase token");
-			Cookie cookie = new Cookie("token", "");
-			cookie.setValue(null);  // Clear cookie value
-            cookie.setMaxAge(0);    // Set expiry to immediately remove it
-            cookie.setPath("/");    // Ensure it matches the original path
-            response.addCookie(cookie);  // Add the cookie with the modified attributes
+			eraseCookie(response);
             e.printStackTrace();
 		}
 		return null;
+	}
+	
+	private void eraseCookie(HttpServletResponse response) {
+		Cookie cookie = new Cookie("token", "");
+		cookie.setValue(null);  // Clear cookie value
+        cookie.setMaxAge(0);    // Set expiry to immediately remove it
+        cookie.setPath("/");    // Ensure it matches the original path
+        response.addCookie(cookie);  // Add the cookie with the modified attributes
 	}
 	
 	public static String getSecretKey() {

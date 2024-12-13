@@ -70,8 +70,8 @@ public class LoginRepository extends Repository {
                     rs.getString("email"),
                     rs.getString("img") // 이미지는 img 테이블에서 가져온 uri
                 );
-                System.out.println("LoginRepository >> success getUserById()");
-            }
+                System.out.println("LoginRepository >> success getUserById() >>"+user.toString());
+            } 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

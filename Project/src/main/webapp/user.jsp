@@ -169,6 +169,31 @@
             const section = document.getElementById(sectionId);
             section.classList.remove('edit-mode');
         }
+        async function deleteUser() {
+            try {
+                // Fetch 요청 전송
+                const response = await fetch('./UserPage', {
+                    method: 'delete', // HTTP DELETE 메서드 사용
+                    headers: {
+                        'Content-Type': 'application/json', // JSON 요청임을 명시
+                    }
+                });
+
+                // 상태 코드에 따른 처리
+                if (response.status === 200) {
+                	eraseCookie();
+                	alert('사용자 삭제 성공');
+                	//window.location.href = './mainPage // 페이지 새로고침
+                } else if (response.status === 400) {
+                    alert('로그인 후 이용해주세요.');
+                } else {
+                    alert('알 수 없는 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                console.error('deleteUser() >> 네트워크 에러:', error);
+                alert('서버와의 통신에 문제가 발생했습니다.');
+            }
+        }
     </script>
 </head>
 <body>
@@ -208,6 +233,8 @@
             <input type="email" name="email" value="<%= user.getEmail() %>" />
             <button type="button" onclick="updateUserData()">수정</button>
         </div>
+        
+        <button onclick="deleteUser()">회원 탈퇴</button>
     </form>
 </body>
 </html>

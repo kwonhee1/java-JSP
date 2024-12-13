@@ -81,7 +81,8 @@
     	function eraseCookie(){
     		console.log("clicked")
     		document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    		window.location.reload("true")
+    		//window.top.location.reload("true")
+    		window.location.href = './MainPage';
     	}
     	// 사이드 메뉴 열고 닫기 함수
         function toggleSideMenu() {
@@ -92,12 +93,6 @@
         function toggleSideMenu2() {
             var sideMenu = document.querySelector('#side2');
             sideMenu.classList.toggle('open'); 
-        }
-
-        // 로그아웃 쿠키 삭제 함수
-        function eraseCookie() {
-            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            window.location.reload("true");
         }
     </script>
 </head>

@@ -25,6 +25,31 @@
             document.body.appendChild(form);
             form.submit();
         }
+        async function deleteUser(userId) {
+            try {
+                // Fetch 요청 전송
+                const response = await fetch('./UserPage', {
+                    method: 'delete', // HTTP DELETE 메서드 사용
+                    headers: {
+                        'Content-Type': 'application/json', // JSON 요청임을 명시
+                    },
+                    body: JSON.stringify({ id: userId }) // JSON 객체로 userId 전송
+                });
+
+                // 상태 코드에 따른 처리
+                if (response.status === 200) {
+                    alert('사용자 삭제 성공');
+                    window.location.reload(); // 페이지 새로고침
+                } else if (response.status === 400) {
+                    alert('로그인 후 이용해주세요.');
+                } else {
+                    alert('알 수 없는 오류가 발생했습니다.');
+                }
+            } catch (error) {
+                console.error('deleteUser() >> 네트워크 에러:', error);
+                alert('서버와의 통신에 문제가 발생했습니다.');
+            }
+        }
     </script>
 </head>
 <body>
@@ -55,7 +80,7 @@
                             <td><%= user.getEmail() %></td>
                             <td><%= user.getKey() != null ? user.getKey() : "전화번호 없음" %></td> <!-- 전화번호가 없다면 대체 텍스트 출력 -->
                             <td><button type="button" onclick="editUser('<%= user.getId() %>')">수정</button></td>
-                            <td><a href="./DeleteUser?userId=<%= user.getId() %>">삭제</a></td>
+                            <td><button onclick="deleteUser('<%=user.id %>')">삭제</button></td>
                             <td><img src="<%=projectContextPath+"/images/"+user.getImgURI() %>" />
                             
                         </tr>

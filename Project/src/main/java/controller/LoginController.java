@@ -57,7 +57,8 @@ public class LoginController extends HttpServlet {
 			//token 발급
 			String token = Jwts.builder()
                     .setSubject(user.getId())
-                    .claim("name", user.getName())
+                    .claim("ip", request.getRemoteAddr()) // 클라이언트 IP 포함
+                    .claim("userAgent", request.getHeader("User-Agent")) // User-Agent 포함
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1시간 유효
                     .signWith(SignatureAlgorithm.HS256, TokenService.getSecretKey())

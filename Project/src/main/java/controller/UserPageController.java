@@ -133,19 +133,20 @@ public class UserPageController extends HttpServlet {
 		// 로그인 확인 로그인 없음 400
 		User oldUser = (new TokenService().getUserFromToken(request, response));
 		if(oldUser == null) {
-			response.setStatus(HttpServletResponse.SC_CONFLICT); // 로그인 없음
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 로그인 없음
 			System.out.println("no login");
 			return;
 		}
 		
 		// 객체로 받음
-		User input = (new ObjectMapper()).readValue(request.getReader().readLine(), User.class);
+		User input;
 		
-		// 아이디가 같거나, admin이거나
-		if(!(oldUser.isAdmin() || oldUser.getId().equals(input.getId()))) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
-			System.out.println("not same id or not admin");
-			return;
+		if(oldUser.isAdmin()) { // admin은 input user id를 받은
+			input = (new ObjectMapper()).readValue(request.getReader().readLine(), User.class);
+		}else { // 일반 유저는 해당 토큰 유저 삭제
+			input = oldUser;
+			//token 삭제 client에서 처리
+			
 		}
 		
 		// 성공 200, 실패 400

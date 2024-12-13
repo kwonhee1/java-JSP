@@ -181,8 +181,11 @@
 
                 // 상태 코드에 따른 처리
                 if (response.status === 200) {
-                	eraseCookie();
                 	alert('사용자 삭제 성공');
+                	console.log("clicked")
+            		document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            		//window.top.location.reload("true")
+            		window.top.location.href = window.location.origin+'/Project/MainPage';
                 	//window.location.href = './mainPage // 페이지 새로고침
                 } else if (response.status === 400) {
                     alert('로그인 후 이용해주세요.');

@@ -82,7 +82,8 @@
     		console.log("clicked")
     		document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     		//window.top.location.reload("true")
-    		window.location.href = './MainPage';
+    		//window.top.location.href = '/Project/MainPage';
+    		window.top.location.href = window.location.origin+'/Project/MainPage';
     	}
     	// 사이드 메뉴 열고 닫기 함수
         function toggleSideMenu() {

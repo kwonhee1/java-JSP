@@ -24,19 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebServlet("/UserPage")
 public class UserPageController extends HttpServlet {
 	//private static final long serialVersionUID = 1L;
-    
-    public UserPageController() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		User inputUser = new TokenService().getUserFromToken(request, response);
-		request.setAttribute("user", inputUser);
 		
-		System.out.println("UserPage get() return userPage.jsp");
-		
-		request.getRequestDispatcher("userPage.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

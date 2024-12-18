@@ -7,6 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,6 +22,7 @@ import model.Gym;
 import repository.BoardRepository;
 import repository.MapRepository;
 import service.BoardService;
+import service.CoordinateService;
 import service.MapService;
 
 @WebServlet("/MapPage")
@@ -55,39 +58,29 @@ public class MapController extends HttpServlet {
         response.getWriter().write(jsonResponse);
         return ;
 	}
-
-	 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	        // 폼 데이터에서 "_method" 파라미터 읽기
-	        String method = request.getParameter("_method");
-
-	        if (method == null) {
-	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-	            response.getWriter().write("Method parameter is missing.");
-	            return;
-	        }
-	        mapService = new MapService();
-	        // "_method" 값에 따라 다른 작업을 처리
-	        if (method.equals("update")) {
-	            System.out.println("MapPage Post >> try update db");
-	            mapService.updateAll((HashMap<String, String>) getServletContext().getAttribute("siteCodeMap"));
-	            response.setStatus(HttpServletResponse.SC_OK);
-	            response.getWriter().write("Database updated successfully.");
-	            return;
-	        } else if (method.equals("reload")) {
-	            System.out.println("MapPage Post >> try load db");
-	            mapService.reload((HashMap<String, String>) getServletContext().getAttribute("siteCodeMap"));
-	            response.setStatus(HttpServletResponse.SC_OK);
-	            response.getWriter().write("Database reloaded successfully.");
-	            return;
-	        } else {
-	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-	            response.getWriter().write("Invalid method parameter.");
-	        }
-	    }
 	 
-	 // map page 정보 수정
-	 protected void doPut() {
+	 protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		 String input = request.getReader().readLine();
 		 
+		 String regex = "\\{\"y\"\\s*:\\s*(.*?),\\s*\"x\"\\s*:\\s*(.*?)\\s*\\}";
+		 System.out.println("Map Page >> Put >> chage coordinate " + input);
+	     String output = null;
+	        // 패턴 컴파일
+	     Pattern pattern = Pattern.compile(regex);
+	     Matcher matcher = pattern.matcher(input);   
+	        // 매칭 검사 및 값 추출
+	     if (matcher.find()) {
+	    	 output = CoordinateService.changeFrom(matcher.group(1), matcher.group(2));
+	    	 System.out.println(input+" to "+ output);
+	     }
+		 
+	     if(output == null) {
+	    	 System.out.println("output is null >> error");
+	     }
+	     
+	     response.setStatus(HttpServletResponse.SC_OK);
+	     response.getWriter().write(output);
+	     return;
 	 }
 	 
 	 // map page search with gym name (String)

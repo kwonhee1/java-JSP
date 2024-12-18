@@ -113,6 +113,7 @@
         </select>
         <input type="text" id="search" /> 
         <button onclick="searchGym()">검색</button>
+        <button onclick="getLocation()"> 내위치 검색</button>
     </div>
 
     <div id="map-content">
@@ -501,7 +502,7 @@
 
     vmap.on('click', function (evt) {
         var feature = vmap.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
-            if (layer != null && layer.className == 'vw.ol3.layer.Marker') {
+            if (layer != null && layer.className == 'vw.ol3.layer.Marker' && feature.values_.attr.id != undefined) {
                 selected = feature.values_.attr;
                 showBoard(feature.values_.attr.id);
             } else {
@@ -549,6 +550,67 @@
     window.onload = function () {
         showGym(document.getElementById("site").value);
     };
+    
+    function getLocation() {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude, accuracy } = position.coords;
+              data = {y:latitude, x: longitude};
+              getCoordinate(data)
+              
+            },
+            (error) => {
+              console.log(`위치 정보를 가져올 수 없습니다: ${error.message}`);
+            },
+            {
+              enableHighAccuracy: true, // 정확도 우선 모드
+              timeout: 10000,           // 10초 이내에 응답 없으면 에러 발생
+              maximumAge: 0             // 항상 최신 위치 정보 수집
+            }
+          );
+        } else {
+          console.log("브라우저가 위치 서비스를 지원하지 않습니다.");
+        }
+      }
+    
+    async function getCoordinate(data) {
+        try {
+            const response = await fetch("<%=projectContextPath%>/MapPage", {
+                method: 'put',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+
+            .then(response => response.json())
+            .then(data => {
+                	coordinate = {}
+                	const markerOption = {
+                        x: data.x,
+                        y: data.y,
+                        epsg: "EPSG:3857",
+                        title: '내위치',
+                        contents: '',
+                        iconUrl: '//map.vworld.kr/images/ol3/marker_blue.png',
+                        text: {
+                            offsetX: 0.5,
+                            offsetY: 20,
+                            font: '12px Calibri,sans-serif',
+                            fill: { color: '#000' },
+                            stroke: { color: '#fff', width: 2 },
+                            text: '내위치'
+                        }
+                    };
+                    markerLayer.addMarker(markerOption);
+                    move(data.y,data.x)
+            })
+        } catch (error) {
+            console.error("Error deleting board item:", error);
+            alert("서버 요청 중 오류가 발생했습니다.");
+        }
+    }
 
     </script>
 </body>

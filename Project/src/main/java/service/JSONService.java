@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class JSONService {
-    public ArrayList<Gym> parseJson(InputStream inputStream, String site) {
+    public ArrayList<Gym> parseMap(InputStream inputStream, String site) {
     	try {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(inputStream);
@@ -41,5 +41,33 @@ public class JSONService {
     		e.printStackTrace();
     	}
     	return null;
+    }
+    
+    public String getSiteName(InputStream inputStream) {
+    	try {
+    		// ObjectMapper를 사용하여 JSON 파싱
+            ObjectMapper objectMapper = new ObjectMapper();
+            
+            // JSON을 트리 구조로 파싱
+            JsonNode rootNode = objectMapper.readTree(inputStream);
+            
+//            // "response" -> "result" -> 첫 번째 항목 -> "structure" -> "level2"에서 "중구"를 추출
+//            JsonNode level2Node = rootNode.path("response")
+//                                          .path("result")
+//                                          .get(0)  // 첫 번째 요소
+//                                          .path("structure")
+//                                          .path("level2");
+            
+            JsonNode resultNode = rootNode.path("response").path("result").get(0);
+            JsonNode structureNode = resultNode.path("structure");
+            String level2 = structureNode.path("level2").asText();  // "구로구"
+            String text = resultNode.path("text").asText();  // "서울특별시 구로구 구로동 64"
+            
+            // "level2" 값 반환
+            return String.format("\"site\" : \"%s\", \"text\":\"%s\"", level2, text);
+    	}catch (Exception e) {
+    		e.printStackTrace();
+			return null;
+		}
     }
 }

@@ -79,7 +79,7 @@ public class CoordinateService {
 			// º¯È¯µÈ ÁÂÇ¥
 			System.out.println(String.format("input (y, x) = (%s, %s), output = (%f,%f)", y,x,p2.y,p2.x).toString());
 			
-			return String.format("{\"y\": %.10f, \"x\": %.10f}", p2.y, p2.x);
+			return String.format("\"y\": %.10f, \"x\": %.10f", p2.y, p2.x);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

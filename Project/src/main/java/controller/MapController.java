@@ -28,7 +28,6 @@ import service.MapService;
 @WebServlet("/MapPage")
 public class MapController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private MapService mapService;
 	
 	// Map 정보르 반환해줌
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -64,22 +63,22 @@ public class MapController extends HttpServlet {
 		 
 		 String regex = "\\{\"y\"\\s*:\\s*(.*?),\\s*\"x\"\\s*:\\s*(.*?)\\s*\\}";
 		 System.out.println("Map Page >> Put >> chage coordinate " + input);
-	     String output = null;
+	     String output = "{%s, %s}";
 	        // 패턴 컴파일
 	     Pattern pattern = Pattern.compile(regex);
 	     Matcher matcher = pattern.matcher(input);   
-	        // 매칭 검사 및 값 추출
-	     if (matcher.find()) {
-	    	 output = CoordinateService.changeFrom(matcher.group(1), matcher.group(2));
-	    	 System.out.println(input+" to "+ output);
-	     }
-		 
-	     if(output == null) {
-	    	 System.out.println("output is null >> error");
-	     }
+	      
+	     matcher.find();
+	     String y = matcher.group(1);
+	     String x = matcher.group(2);
+	     
+	     String coord = CoordinateService.changeFrom(y,x);
+	     String site = (new MapService()).getSiteName(y, x);
+	     
+	     System.out.println("Map Page >> Put >> output " + String.format(output, coord, site));
 	     
 	     response.setStatus(HttpServletResponse.SC_OK);
-	     response.getWriter().write(output);
+	     response.getWriter().write(String.format(output, coord, site));
 	     return;
 	 }
 	 

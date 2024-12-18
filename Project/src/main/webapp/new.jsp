@@ -162,7 +162,7 @@
 
     async function showGym(site) {
         console.log(site);
-        fetch("<%=projectContextPath%>/MapPage?site=" + site, {
+        await fetch("<%=projectContextPath%>/MapPage?site=" + site, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -556,7 +556,7 @@
           navigator.geolocation.getCurrentPosition(
             (position) => {
               const { latitude, longitude, accuracy } = position.coords;
-              data = {y:latitude, x: longitude};
+              data = {y:latitude, x: longitude}
               getCoordinate(data)
               
             },
@@ -582,35 +582,35 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data)
-            })
+            });
+            const responseData = await response.json(); 
 
-            .then(response => response.json())
-            .then(data => {
-                	coordinate = {}
-                	const markerOption = {
-                        x: data.x,
-                        y: data.y,
-                        epsg: "EPSG:3857",
-                        title: '내위치',
-                        contents: '',
-                        iconUrl: '//map.vworld.kr/images/ol3/marker_blue.png',
-                        text: {
-                            offsetX: 0.5,
-                            offsetY: 20,
-                            font: '12px Calibri,sans-serif',
-                            fill: { color: '#000' },
-                            stroke: { color: '#fff', width: 2 },
-                            text: '내위치'
-                        }
-                    };
-                    markerLayer.addMarker(markerOption);
-                    move(data.y,data.x)
-            })
+            console.log(responseData);
+            await showGym(responseData.site);
+
+            const markerOption = {
+                x: responseData.x,
+                y: responseData.y,
+                epsg: "EPSG:3857",
+                title : responseData.text,
+                contents: '',
+                text: {
+                    offsetX: 0.5,
+                    offsetY: 20,
+                    font: '12px Calibri,sans-serif',
+                    fill: { color: '#fff' },
+                    stroke: { color: '#000', width: 5 },
+                    text:  '현위치'
+                }
+            };
+            markerLayer.addMarker(markerOption);
+            move(responseData.y, responseData.x);
         } catch (error) {
             console.error("Error deleting board item:", error);
             alert("서버 요청 중 오류가 발생했습니다.");
         }
     }
+
 
     </script>
 </body>

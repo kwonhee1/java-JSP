@@ -24,7 +24,7 @@ public class MapService {
 	public void updateAll(HashMap<String, String> siteMap) {
 		MapRepository repository = new MapRepository();
 		siteMap.values().forEach(s->{
-			ArrayList<Gym> lists = jsonService.parseJson(getConnection(s), s);
+			ArrayList<Gym> lists = jsonService.parseMap(getConnection(s), s);
 			repository.updateAll(lists);
 		});
 	}
@@ -33,10 +33,24 @@ public class MapService {
 		MapRepository repository = new MapRepository();
 		repository.deleteAll();
 		siteMap.values().forEach(s->{
-			ArrayList<Gym> lists = jsonService.parseJson(getConnection(s), s);
+			ArrayList<Gym> lists = jsonService.parseMap(getConnection(s), s);
 			repository.save(lists);
 		});
 	}
+	
+	public String getSiteName(String y, String x) {
+		try {
+		URL url = new URL( String.format("https://api.vworld.kr/req/address?service=address&request=getAddress&version=2.0&crs=epsg:4326&point=%s,%s&format=json&type=PARCEL&zipcode=false&simple=true&key=D3ED6D88-FE33-3EA8-A41A-C9669E56C2E3", x,y));
+		System.out.println("MapService get api url : "+ String.format("https://api.vworld.kr/req/address?service=address&request=getAddress&version=2.0&crs=epsg:4326&point=%s,%s&format=json&type=PARCEL&zipcode=false&simple=true&key=D3ED6D88-FE33-3EA8-A41A-C9669E56C2E3", x,y));
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Content-type", "application/json");
+		
+		return jsonService.getSiteName(conn.getInputStream());
+		}catch (Exception e) {
+			return null;
+		}
+		}
 	
 	private InputStream getConnection(String siteCode) {
 		

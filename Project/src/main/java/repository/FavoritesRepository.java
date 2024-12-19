@@ -7,21 +7,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Gym; // model.Gym 클래스 import
+import model.Gym;
 
-public class FavoritesRepository {
-    private Repository repository = new Repository();
-
+public class FavoritesRepository extends Repository {
+    
     // 즐겨찾기에 추가
     public boolean addFavorite(String userId, int gymId) {
         String query = "INSERT INTO favorite (userId, gymId) VALUES (?, ?)";
-        try (Connection conn = repository.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
             pstmt.setString(1, userId);
             pstmt.setInt(2, gymId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            disconnect(conn, pstmt); // 부모 클래스의 메서드를 사용
         }
         return false;
     }
@@ -29,13 +34,19 @@ public class FavoritesRepository {
     // 즐겨찾기 삭제
     public boolean removeFavorite(String userId, int gymId) {
         String query = "DELETE FROM favorite WHERE userId = ? AND gymId = ?";
-        try (Connection conn = repository.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
             pstmt.setString(1, userId);
             pstmt.setInt(2, gymId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            disconnect(conn, pstmt); // 부모 클래스의 메서드를 사용
         }
         return false;
     }
@@ -50,25 +61,32 @@ public class FavoritesRepository {
         """;
 
         List<Gym> gyms = new ArrayList<>();
-        try (Connection conn = repository.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(query);
             pstmt.setString(1, userId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Gym gym = new Gym();
-                    gym.setId(rs.getInt("id"));
-                    gym.setSiteCode(rs.getString("siteCode"));
-                    gym.setOldAddr(rs.getString("oldAddr"));
-                    gym.setNewAddr(rs.getString("newAddr"));
-                    gym.setName(rs.getString("name"));
-                    gym.setY(rs.getDouble("y"));
-                    gym.setX(rs.getDouble("x"));
-                    gym.status = rs.getBoolean("status"); // 직접 필드에 설정
-                    gyms.add(gym);
-                }
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Gym gym = new Gym();
+                gym.setId(rs.getInt("id"));
+                gym.setSiteCode(rs.getString("siteCode"));
+                gym.setOldAddr(rs.getString("oldAddr"));
+                gym.setNewAddr(rs.getString("newAddr"));
+                gym.setName(rs.getString("name"));
+                gym.setY(rs.getDouble("y"));
+                gym.setX(rs.getDouble("x"));
+                gym.status = rs.getBoolean("status"); // 직접 필드에 설정
+                gyms.add(gym);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            disconnect(conn, pstmt, rs); // 부모 클래스의 메서드를 사용
         }
         return gyms;
     }

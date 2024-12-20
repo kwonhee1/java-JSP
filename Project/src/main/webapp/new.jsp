@@ -373,8 +373,7 @@
         for (let i = 0; i < rate / count; i++) {
             stars += "★";
         }
-
-        gymInfo.innerHTML = "<strong>" + selected.name + "</strong> <div class='stars'>" + stars + "</div><hr>";
+        gymInfo.innerHTML = "<strong>" + selected.name + "</strong> <button onclick='addFavorites("+selected.id+")'>즐겨찾기</button> <div class='stars'>" + stars + "</div><hr>";
     }
 
     function addBoardItem(existingBoard = null) {
@@ -564,9 +563,9 @@
               console.log(`위치 정보를 가져올 수 없습니다: ${error.message}`);
             },
             {
-              enableHighAccuracy: true, // 정확도 우선 모드
-              timeout: 10000,           // 10초 이내에 응답 없으면 에러 발생
-              maximumAge: 0             // 항상 최신 위치 정보 수집
+              enableHighAccuracy: true,
+              timeout: 10000,    
+              maximumAge: 0 
             }
           );
         } else {

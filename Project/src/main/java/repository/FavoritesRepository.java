@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,10 @@ public class FavoritesRepository extends Repository {
             pstmt.setString(1, userId);
             pstmt.setInt(2, gymId);
             return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
+        }catch(SQLIntegrityConstraintViolationException e) { 
+        	// duplicate
+        	return true;
+        }catch (SQLException e) {
             e.printStackTrace();
         } finally {
             disconnect(conn, pstmt); // 부모 클래스의 메서드를 사용

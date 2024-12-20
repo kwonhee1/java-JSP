@@ -197,11 +197,114 @@
                 alert('서버와의 통신에 문제가 발생했습니다.');
             }
         }
+        
+        async function getFavorites() {
+            try {
+                const response = await fetch("FavoritesPage");
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const favoriteGyms = Array.isArray(data) ? data : [data];
+                
+                console.log("getFavorites from server "+favoriteGyms)
+                
+                return favoriteGyms;
+            } catch (error) {
+                console.error("Failed to fetch favorite gyms:", error);
+                return [];
+            }
+        }
+
+        
+        function renderFavorites(favorites) {
+            const favoritesContainer = document.getElementById("favorites");
+
+            // 기존 내용을 초기화
+            favoritesContainer.innerHTML = "<a style='font-size: 1.5em; color: white;' onclick='initFavorites()'>즐겨찾기</a>";
+
+            // 각 즐겨찾기 항목 추가
+            favorites.forEach(favorite => {
+                const favoriteDiv = document.createElement("div");
+                favoriteDiv.id = favorite.id;
+
+                // 즐겨찾기 이름
+                const favoriteName = document.createElement("span");
+                favoriteName.textContent = favorite.name;
+                favoriteName.onclick = () => renderFavorite(favorite);
+
+                // 즐겨찾기 해제 버튼
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.onclick = () => removeFavorite(favorite.id);
+
+                favoriteDiv.appendChild(favoriteName);
+                favoriteDiv.appendChild(removeButton);
+                favoritesContainer.appendChild(favoriteDiv);
+            });
+        }
+        async function removeFavorite(gymId) {
+            try {
+                const response = await fetch("FavoritesPage/"+gymId, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                console.log(`Gym with ID ${gymId} removed from favorites successfully.`);
+                initFavorites();
+            } catch (error) {
+                console.error(`Failed to remove gym with ID ${gymId} from favorites:`, error);
+            }
+        }
+        
+        function renderFavorite(favoriteGym) {
+            // 지도에 특정 헬스장을 렌더링
+            renderGyms([favoriteGym]); // renderGyms는 외부에서 정의된 함수라고 가정
+
+            // 해당 위치로 이동
+            move(favoriteGym.y, favoriteGym.x); // move도 외부에서 정의된 함수라고 가정
+            
+        }
+        async function initFavorites() {
+            const favorites = await getFavorites();
+            renderFavorites(favorites);
+        }
+        
+        async function addFavorites(gymId) {
+            try {
+                const response = await fetch("FavoritesPage/"+gymId, {
+                    method: 'PUT', // HTTP PUT 메서드
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                console.log(`Gym with ID ${gymId} added to favorites successfully.`);
+                initFavorites();
+            } catch (error) {
+                console.error(`Failed to add gym with ID ${gymId} to favorites:`, error);
+            }
+        }
+
     </script>
 </head>
 <body>
-    <h1>프로필 수정</h1>
+    <a style="font-size: 2em; color: white;">My Page</a> <hr>
     
+    <div id="favorites">
+    	<a style="font-size: 1.5em; color: white;" onclick="initFavorites()">즐겨찾기</a>
+    	
+    </div>
+    <hr>
     <form>
     <!-- 이미지 -->
         <div class="profile-section" id="imageSection">

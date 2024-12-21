@@ -60,7 +60,6 @@
                 <th>사용자 ID</th>
                 <th>비밀번호</th>
                 <th>이메일</th>
-                <th>전화번호</th>
                 <th>수정</th>
                 <th>삭제</th>
                 <th>이미지</th>
@@ -78,10 +77,12 @@
                             <td><%= user.getId() %></td>
                             <td><%= user.getPasswd() %></td>
                             <td><%= user.getEmail() %></td>
-                            <td><%= user.getKey() != null ? user.getKey() : "전화번호 없음" %></td> <!-- 전화번호가 없다면 대체 텍스트 출력 -->
                             <td><button type="button" onclick="editUser('<%= user.getId() %>')">수정</button></td>
                             <td><button onclick="deleteUser('<%=user.id %>')">삭제</button></td>
-                            <td><img src="<%=projectContextPath+"/images/"+user.getImgURI() %>" />
+                          <td><img src="<%=projectContextPath+"/images/"+user.getImgURI() %>" 
+                            style="width: 100px; height: 100px;" />
+</td>
+                          
                             
                         </tr>
             <%

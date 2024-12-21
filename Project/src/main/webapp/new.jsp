@@ -545,10 +545,6 @@
         vmap.getView().setZoom(14);
         console.log("map move ", y, x);
     }
-
-    window.onload = function () {
-        showGym(document.getElementById("site").value);
-    };
     
     function getLocation() {
         if ("geolocation" in navigator) {

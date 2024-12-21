@@ -163,7 +163,8 @@
             });
         }
         window.onload = function () {
-        	console.log("register google init")
+        	showGym(document.getElementById("site").value);
+
             google.accounts.id.initialize({
                 client_id: "97037992251-getttgeh5mjdnkbjfjleaif4vosr056h.apps.googleusercontent.com",
                 callback: handleCredentialResponse2

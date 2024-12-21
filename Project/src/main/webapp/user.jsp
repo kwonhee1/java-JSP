@@ -64,10 +64,10 @@
                 body: JSON.stringify(userData)
             });
 
-            if (putResponse.status === 200) {
+            if (putResponse.status == 200) {
                 // 200: 이미지 포함한 두 번째 POST 요청
                 await updateUserImage();
-            }else if(putResponse.status === 202){
+            }else if(putResponse.status == 202){
             	alert('email또는 비밀번호가 변경되었습니다 email인증을 다시합니다');
             	addEmailVerificationInput();
             }
@@ -75,6 +75,7 @@
                 alert('서버 처리 오류가 발생했습니다.');
             }
         } catch (error) {
+        	console.log(error)
             alert('서버와의 연결에 문제가 발생했습니다.');
         }
     }
@@ -96,7 +97,9 @@
         formData.append('id', "<%= user.getId() %>");
         formData.append('passwd', document.querySelector('input[name="password"]').value);
         formData.append('email', document.querySelector('input[name="email"]').value);
-        formData.append('key', document.getElementById('emailVerificationCode').value);
+        const key = document.getElementById('emailVerificationCode')
+        if(key)
+        	formData.append('key', key.value);
 
         const response = await fetch('UserPage', {
             method: 'POST',
@@ -139,28 +142,6 @@
         }
 
 
-        // 이메일 인증 코드 제출 함수
-        async function verifyEmailCode() {
-            try {
-                // 이메일 인증 데이터를 가져옴
-                const verificationCode = document.getElementById('emailVerificationCode').value;
-
-                // 기존 데이터와 이메일 인증 코드를 병합
-                const userData = {
-                    name: document.querySelector('input[name="name"]').value,
-                    id: "<%= user.getId() %>",
-                    passwd: document.querySelector('input[name="password"]').value,
-                    email: document.querySelector('input[name="email"]').value,
-                    verificationCode: verificationCode
-                };
-
-                // POST 요청 전송
-                await updateUserImage(userData);
-            } catch (error) {
-                alert('서버와 통신 중 오류가 발생했습니다.');
-                console.error('오류:', error);
-            }
-        }
         function enableEdit(sectionId) {
             const section = document.getElementById(sectionId);
             section.classList.add('edit-mode');
@@ -330,7 +311,7 @@
         <!-- 비밀번호 -->
         <div class="profile-section" id="passwordSection">
             <span onclick="enableEdit('passwordSection')">●●●●●●●</span>
-            <input type="password" name="password" value="<%= user.getPasswd() %>" />
+            <input type="password" name="password" value="●●●●●●●" />
             <button type="button" onclick="updateUserData()">수정</button>
         </div>
 

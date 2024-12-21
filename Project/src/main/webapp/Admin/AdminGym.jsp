@@ -44,6 +44,7 @@
         <thead>
             <tr>
                 <th>헬스장 이름</th>
+                <th>헬스장 id</th>
                 <th>상태</th>
                 <th>수정</th>
             </tr>
@@ -60,6 +61,7 @@
             %>
             <tr>
                 <td><%= gymName %></td>
+                <td><%= gym.id %></td>
                 <td><%= gymStatus %></td>
                 <td>
                     <form action="<%= request.getContextPath() %>/AdminGym" method="post">

@@ -26,22 +26,32 @@ public class UserPageController extends HttpServlet {
 	//private static final long serialVersionUID = 1L;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		User oldUser = new TokenService().getUserFromToken(request, response);
+		FileService fileService = new FileService();
+		LoginRepository loginRepository = new LoginRepository();
+		
+		User tokenUser = new TokenService().getUserFromToken(request, response);
 		String inputUserEmail = request.getParameter("email");
 		String inputUserId = request.getParameter("id");
 		User inputUser = new User(inputUserId, request.getParameter("passwd"), request.getParameter("name"), inputUserEmail);
+		User oldUser = loginRepository.getUserById(inputUserId);
 		
-		System.out.println("UserPage post() : edit user data inputUser:"+ inputUser.toString()+", oldUser:"+oldUser.toString());
+		if(inputUser.getPasswd().isEmpty()) {
+			// 만약 input User의 passwd가 비었을경우 변환하지 않음으로 간주
+			inputUser.setPasswd(oldUser.getPasswd());
+		}
 		
-		// token의 id와 input된 id값이 동일 해야함
+		System.out.println("UserPage post() : edit user data inputUser:"+ inputUser.toString()+", oldUser:"+tokenUser.toString());
+		
+		// token의 id와 input된 id값이 동일 해야함 또는 어드민 이어야함
 		// email이 변경되면 다시 인증
-		if(oldUser == null || (!oldUser.getId().equals(inputUserId) && !oldUser.isAdmin()) ) {
+		if(tokenUser == null || (!oldUser.getId().equals(inputUserId) && !tokenUser.isAdmin()) ) {
 			System.out.println("user id is changed return alert page.jsp");
 			request.setAttribute("err", "사용자의 id값은 변경할수 없습니다");
 			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
 			return;
 		}
-		if(!oldUser.isAdmin() && !oldUser.getEmail().equals(inputUserEmail)) {
+		// 어드민이 아니거나 이메일이 변경되었을 경우 이메일 재인증
+		if(!tokenUser.isAdmin() && !oldUser.getEmail().equals(inputUserEmail)) {
 			// email 인증 다시 확인
 			if(!new EmailService().checkByKeyCode(inputUserId, (String)request.getParameter("key"))) {
 				System.out.println("not correct email key => return 400");
@@ -52,9 +62,16 @@ public class UserPageController extends HttpServlet {
 		
 		System.out.println("UserPage Post -> emailcheck success -> try update file and update user DB");
 		
-		FileService fileService = new FileService();
-		LoginRepository loginRepository = new LoginRepository();
 		String imgURL = (String)getServletContext().getAttribute("imgURL");
+		
+		if(loginRepository.isSosial(inputUserId)) {
+			// social user는 비번 변경 불가
+			if(!oldUser.getPasswd().equals(inputUser.getPasswd())) {
+				System.out.println("social user cannot update passwd");
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+				return;
+			}
+		}
 		
 		// user img를 가져오고 해당 img를 업데이트함
 		Part inputPart = request.getPart("img");
@@ -65,7 +82,7 @@ public class UserPageController extends HttpServlet {
 			// 이전 user의 img uri를 가져옴 => default사진이 아니라면 삭제
 			if(!oldUser.getImgURI().equals("default.png")) {
 				// erase img
-				fileService.removeImg(imgURL, loginRepository.getImgId(oldUser.getId()));
+				fileService.removeImg(imgURL, loginRepository.getImgId(tokenUser.getId()));
 			}
 			// 새로운 img파일 저장
 			imgId = fileService.saveFile(imgURL, inputPart, 1);

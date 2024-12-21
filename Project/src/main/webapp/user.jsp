@@ -116,6 +116,9 @@
         } else if (response.status === 406) {
             // 406: ID 변경 불가 알림
             alert('ID값은 변경할 수 없습니다.');
+        }else if (response.status === 409) {
+            // 
+            alert('소셜로그인 사용자는 비밀번호를 변경할수 없습니다');
         } else {
             alert('알 수 없는 오류가 발생했습니다.');
         }
@@ -311,7 +314,7 @@
         <!-- 비밀번호 -->
         <div class="profile-section" id="passwordSection">
             <span onclick="enableEdit('passwordSection')">●●●●●●●</span>
-            <input type="password" name="password" value="●●●●●●●" />
+            <input type="password" name="password" value="" />
             <button type="button" onclick="updateUserData()">수정</button>
         </div>
 

@@ -19,6 +19,7 @@
                 <th>내용</th>
                 <th>작성자</th>
                 <th>작성일</th>
+                <th> 사진 </th>
                 <th>수정</th>
                 <td>삭제</th>
             </tr>
@@ -35,6 +36,7 @@
                             <td><%= board.getContent() %></td>
                             <td><%= board.getUserName() %></td>
                             <td><%= board.getCreatedAt() %></td>
+                            <td><img src="<%=projectContextPath+"/images/"+board.getImgURI()%>"  style="width: 100px; height: 100px;"/></td>
                             <td><a href="./AdminBoard?boardId=<%= board.getId() %>">수정</a></td>
                             <td><button onclick="deleteBoard(<%=board.getId()%>)">삭제</button></td>
                         </tr>

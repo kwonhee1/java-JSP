@@ -135,7 +135,7 @@
         const idToken = response.credential;
 
         // ID Token을 서버로 전송
-        fetch('../Project/oauth2/callback/google', {
+        fetch('http://localhost:8080/Project/oauth2/callback/google', {
             method: 'put',
             headers: {
                 'Content-Type': 'application/json'

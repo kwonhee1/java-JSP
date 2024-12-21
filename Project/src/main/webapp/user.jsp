@@ -96,6 +96,7 @@
         formData.append('id', "<%= user.getId() %>");
         formData.append('passwd', document.querySelector('input[name="password"]').value);
         formData.append('email', document.querySelector('input[name="email"]').value);
+        formData.append('key', document.getElementById('emailVerificationCode').value);
 
         const response = await fetch('UserPage', {
             method: 'POST',
@@ -132,7 +133,7 @@
             verificationSection.innerHTML = `
                 <label for="emailVerificationCode">이메일 인증 코드:</label>
                 <input type="text" id="emailVerificationCode" placeholder="인증 코드를 입력하세요" />
-                <button type="button" onclick="verifyEmailCode()">제출</button>
+                <button type="button" onclick="updateUserImage()">제출</button>
             `;
             form.appendChild(verificationSection);
         }
@@ -154,7 +155,7 @@
                 };
 
                 // POST 요청 전송
-                await submitUserData(userData);
+                await updateUserImage(userData);
             } catch (error) {
                 alert('서버와 통신 중 오류가 발생했습니다.');
                 console.error('오류:', error);
@@ -184,7 +185,7 @@
                 	alert('사용자 삭제 성공');
                 	console.log("clicked")
             		document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            		//window.top.location.reload("true")
+            		//window.top.location.reload("trsue")
             		window.top.location.href = window.location.origin+'/Project/MainPage';
                 	//window.location.href = './mainPage // 페이지 새로고침
                 } else if (response.status === 400) {
@@ -339,9 +340,8 @@
             <input type="email" name="email" value="<%= user.getEmail() %>" />
             <button type="button" onclick="updateUserData()">수정</button>
         </div>
-        
-        <button onclick="deleteUser()">회원 탈퇴</button>
     </form>
+    <button onclick="deleteUser()">회원 탈퇴</button>
 </body>
 </html>
 <% } %>

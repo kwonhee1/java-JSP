@@ -61,9 +61,8 @@ public class google extends HttpServlet {
         String passwd = tokenInfo.get("sub").asText();
         String email = tokenInfo.get("email").asText();
         String name = tokenInfo.get("name").asText();
-        
 
-        System.out.println("Google post() >> recive user info from google try login");
+        System.out.println("Google post() >> recive user info from google try login" +email + passwd + name);
         
         User user = new LoginService().isUser(new User(email, passwd, name, email));
         if (user == null) {

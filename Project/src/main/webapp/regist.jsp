@@ -137,11 +137,12 @@
             }
         }
         function handleCredentialResponse2(response) {
+        	console.log("social register ", response)
             // Google로부터 ID Token을 받음
             const idToken = response.credential;
 
             // ID Token을 서버로 전송
-            fetch('../Project/oauth2/callback/google', {
+            fetch('http://localhost:8080/Project/oauth2/callback/google', {
                 method: 'put',
                 headers: {
                     'Content-Type': 'application/json'

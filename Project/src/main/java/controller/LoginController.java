@@ -23,14 +23,6 @@ public class LoginController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private LoginService loginService = new LoginService();
 
-	// login 페이지 return
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//doGet(request, response);
-		System.out.println("Login get() >> return login.jsp");
-		request.getRequestDispatcher("login.jsp").forward(request, response);
-		
-	}
-
 	// login 기능
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");

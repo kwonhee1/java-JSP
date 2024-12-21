@@ -19,13 +19,6 @@ public class RegistController extends HttpServlet {
 	private LoginService loginService;
 	private EmailService emailService;
 
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// return regist.jsp
-		System.out.println("Regist get() return regist.jsp");
-		request.getRequestDispatcher("regist.jsp").forward(request, response);
-	}
-
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		User input = (new ObjectMapper()).readValue(request.getReader().readLine(), User.class);

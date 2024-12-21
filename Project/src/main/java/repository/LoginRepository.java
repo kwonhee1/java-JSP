@@ -10,7 +10,60 @@ import model.User;
 
 public class LoginRepository extends Repository {
     private Connection conn;
+    
+    // SQL: INSERT INTO user (id, passwd, name, authority, email, sosial) VALUES (?, ?, ?, ?, ?, 1);
+    public boolean addSosialUser(User user) {
+        boolean result = false;
+        try {
+            conn = getConnection();
+            String sql = "INSERT INTO user (id, passwd, name, authority, email, sosial) VALUES (?, ?, ?, ?, ?, 1);";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
 
+            pstmt.setString(1, user.getId());
+            pstmt.setString(2, user.getPasswd());
+            pstmt.setString(3, user.getName());
+            pstmt.setString(4, user.getAuthority());
+            pstmt.setString(5, user.getEmail());
+
+            result = pstmt.executeUpdate() > 0; // 삽입 성공 여부 확인
+            if (result) {
+                System.out.println("addSosialUser() >> Successfully added social user");
+            }
+        } catch (SQLException e) {
+            System.out.println("addSosialUser() >> Error occurred");
+            e.printStackTrace();
+        } finally {
+        	disconnect(conn);
+        }
+        return result;
+    }
+
+    // SQL: SELECT sosial FROM user WHERE id = ?
+    public boolean isSosial(String id) {
+        boolean isSosial = false;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = getConnection();
+            String sql = "SELECT sosial FROM user WHERE id = ?;";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, id);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                isSosial = rs.getInt("sosial") == 1; // `sosial` 필드가 1이면 true
+                System.out.println("isSosial() >> Social user status: " + isSosial);
+            }
+        } catch (SQLException e) {
+            System.out.println("isSosial() >> Error occurred");
+            e.printStackTrace();
+        } finally {
+            disconnect(conn, pstmt, rs);
+        }
+        return isSosial;
+    }
+    
     // 회원 추가
     // SQL: INSERT INTO user (id, passwd, name, authority, email) VALUES (?, ?, ?, ?, ?);
     public boolean addUser(User user) {

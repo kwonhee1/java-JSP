@@ -4,6 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <title>회원가입</title>
     <style>
         /* 기본 스타일 */
@@ -135,6 +136,50 @@
                 alert('서버와의 연결에 문제가 발생했습니다.');
             }
         }
+        function handleCredentialResponse2(response) {
+            // Google로부터 ID Token을 받음
+            const idToken = response.credential;
+
+            // ID Token을 서버로 전송
+            fetch('../Project/oauth2/callback/google', {
+                method: 'put',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: idToken })
+            })
+            .then(res => {
+                if (res.ok) {
+                	alert('회원 가입 성공');
+                    toggleSideMenu2();
+                    toggleSideMenu();
+                } else {
+                    alert('이미 가입된 사용자입니다')
+                }
+            })
+            .catch(err => {
+                console.error('register error:', err);
+            });
+        }
+        window.onload = function () {
+        	console.log("register google init")
+            google.accounts.id.initialize({
+                client_id: "97037992251-getttgeh5mjdnkbjfjleaif4vosr056h.apps.googleusercontent.com",
+                callback: handleCredentialResponse2
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv2"),
+                { theme: "outline", size: "large" }
+            );
+            google.accounts.id.initialize({
+                client_id: "97037992251-getttgeh5mjdnkbjfjleaif4vosr056h.apps.googleusercontent.com",
+                callback: handleCredentialResponse
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: "outline", size: "large" }
+            );
+        };
     </script>
 </head>
 <body>
@@ -156,6 +201,8 @@
             </div>
             <div id="register_err" style="color: red; font-weight: bold;"></div>
         </form>
+        
+        <div id="buttonDiv2"></div>
     </div>
 </body>
 </html>

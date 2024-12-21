@@ -27,7 +27,7 @@ public class FileRepository extends Repository{
         	System.out.println("FileRepository >> insertImage() >> fail");
             e.printStackTrace();
         }
-        disConnection(conn);
+        disconnect(conn);
         
         return imgId;
     }
@@ -49,7 +49,7 @@ public class FileRepository extends Repository{
             System.out.println("FileRepository >> getURL() >> fail");
             e.printStackTrace();
         }
-        disConnection(conn);
+        disconnect(conn);
         return uri;
     }
 
@@ -69,7 +69,7 @@ public class FileRepository extends Repository{
             System.out.println("FileRepository >> eraseImage() >> fail");
             e.printStackTrace();
         }
-        disConnection(conn);
+        disconnect(conn);
         
         sortImgId();
     }

@@ -4,7 +4,7 @@
 <html>
 <head>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
-<meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta charset="UTF-8">
 <title>Login 페이지</title>
 </head>
@@ -74,7 +74,7 @@
         </form>
         <br>
         <div class="social-login">
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <div id="buttonDiv"></div>
         </div>
     </div>
 </body>
@@ -105,13 +105,54 @@
         }
     });
 
-    function onSignIn(googleUser) {
-    	  var profile = googleUser.getBasicProfile();
-    	  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    	  console.log('Name: ' + profile.getName());
-    	  console.log('Image URL: ' + profile.getImageUrl());
-    	  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-    	}
+    function handleCredentialResponse(response) {
+        // Google로부터 ID Token을 받음
+        const idToken = response.credential;
+
+        // ID Token을 서버로 전송
+        fetch('../Project/oauth2/callback/google', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: idToken })
+        })
+        .then(res => {
+            if (res.ok) {
+            	alert('Login successful!');
+                window.location.href = '/Project/MainPage';  // 인증된 사용자 화면으로 리다이렉트
+            } else {
+            	alert('소셜 로그인 실패입니다')
+            }
+        })
+        .catch(err => {
+            console.error('Login error:', err);
+        });
+    }
+    
+    function handleCredentialResponse2(response) {
+        // Google로부터 ID Token을 받음
+        const idToken = response.credential;
+
+        // ID Token을 서버로 전송
+        fetch('../Project/oauth2/callback/google', {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: idToken })
+        })
+        .then(res => {
+            if (res.ok) {
+                console.log("register success")
+            } else {
+                console.log("register fail")
+            }
+        })
+        .catch(err => {
+            console.error('register error:', err);
+        });
+    }
 	</script>
 </body>
 </html>

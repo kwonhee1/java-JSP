@@ -25,10 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class UserPageController extends HttpServlet {
 	//private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-	}
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User oldUser = new TokenService().getUserFromToken(request, response);
 		String inputUserEmail = request.getParameter("email");

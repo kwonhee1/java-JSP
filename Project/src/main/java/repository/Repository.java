@@ -39,7 +39,7 @@ public class Repository {
         }
     }
 	
-	public void disConnection(Connection conn) {
+	public void disconnect(Connection conn) {
         try {
             if (conn != null) conn.close();
         } catch (SQLException e) {

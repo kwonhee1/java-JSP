@@ -4,11 +4,23 @@ public class User {
 	public String id, name, passwd, email, imgURI;
 	public String authority; // "user" / "admin"
 	public String key;
+	public boolean sosial;
 	
 	public boolean isAdmin() {
 		return authority.equals("admin");
 	}
 	
+	
+	public boolean isSosial() {
+		return sosial;
+	}
+
+
+	public void setSosial(boolean sosial) {
+		this.sosial = sosial;
+	}
+
+
 	public String getImgURI() {
 		return imgURI;
 	}

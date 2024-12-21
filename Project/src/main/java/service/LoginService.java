@@ -28,6 +28,24 @@ public class LoginService {
         }
     }
     
+ // 회원 가입
+    public boolean addUser(User user, boolean sosial) { 
+        if(checkById(user.getId())) {
+            // 이미 같은 ID가 존재함
+            return false;
+        } else {
+            // 비밀번호가 10자리 이하인지 확인 (필요시 추가)
+            // 권한 "user" 설정
+            user.setAuthority("user");
+
+            // DB에 사용자 추가
+            loginRepository.addSosialUser(user);
+            
+            System.out.println("LoginService >> success add User");
+            return true;
+        }
+    }
+    
     // 로그인 확인
     public User isUser(User input) { 
         System.out.println("LoginService >> isUser() >> checking ... ");

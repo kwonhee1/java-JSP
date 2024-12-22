@@ -5,6 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import repository.BoardRepository;
 import model.Board;
 
@@ -22,6 +24,7 @@ public class AdminBoardController extends HttpServlet {
             // boardId 파라미터가 없으면 전체 게시판 목록 가져오기
             try {
                 ArrayList<Board> boardList = boardRepository.getAllBoardList();
+                Collections.sort(boardList, (b1, b2) -> Integer.compare(b1.getGymId(), b2.getGymId()));
                 request.setAttribute("boardList", boardList);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("Admin/AdminBoard.jsp");
                 dispatcher.forward(request, response);

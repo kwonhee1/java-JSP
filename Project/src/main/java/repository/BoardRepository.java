@@ -234,7 +234,7 @@ public class BoardRepository extends Repository {
     }
 
 public ArrayList<Board> getAllBoardList() {
-    String sql = "SELECT b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.rate, b.created_at, i2.uri as userImgURI " +
+    String sql = "SELECT b.gymId, b.id, b.title, b.content, u.name AS userName, i.uri AS imgURI, b.rate, b.created_at, i2.uri as userImgURI " +
                  "FROM board b " +
                  "LEFT JOIN user u ON b.userId = u.id " +
                  "LEFT JOIN img i ON b.imgId = i.id " +
@@ -252,6 +252,7 @@ public ArrayList<Board> getAllBoardList() {
                 board.setUserName(rs.getString("userName"));
                 board.setImgURI(rs.getString("imgURI"));
                 board.setRate(rs.getInt("rate"));
+                board.setGymId(rs.getInt("gymId"));
                 board.setCreatedAt(rs.getTimestamp("created_at"));
                 board.setUserImgURI(rs.getString("userImgURI"));
                 boardList.add(board);

@@ -14,6 +14,7 @@
     <table border="1">
         <thead>
             <tr>
+                <th>헬스장 ID</th> 
                 <th>게시판 ID</th>
                 <th>제목</th>
                 <th>내용</th>
@@ -31,6 +32,7 @@
                     for (Board board : boardList) {
             %>
                         <tr>
+                            <td><%= board.getGymId() %></td>
                             <td><%= board.getId() %></td>
                             <td><%= board.getTitle() %></td>
                             <td><%= board.getContent() %></td>

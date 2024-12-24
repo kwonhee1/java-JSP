@@ -1,15 +1,2 @@
-매인 페이지 (url : Main)
-  get	: retrun main.jsp
-  post	: X
-지도 페이지 (url : Map)
-  get 	: return map.jsp
-      요청 예시 : {site="구로구"} | 반환 : map.jsp 
-  post	: X
-로그인 페이지 (url : Login)
-  get	: return login.jsp
-  post	: 로그인 기능
-       요청 예시 : { id="아이디" passwd="비밀번호" }
-       반환 예시 : 성공시 : return 개인.jsp | 실패시 return login.jsp + setAttribute("fail")
-
-개인 페이지 (url : 미정)
-사용자 정보 수정 페이지 (url : 미정)
+# localhost:8080/Project/
+MainPage get : return 

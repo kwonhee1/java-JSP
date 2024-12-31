@@ -1,0 +1,104 @@
+생성 순서
+img->user->gym->board->favorite->gym_temp
+
+project를 위한 db사용자 (root 계정을 사용하지 않음, 새로운 사용자 생성 필요)
+create user 'jsp'@'%' identified by 'dongyang';
+grant all privileges on jsp.* to 'jsp'@'%';
+
+project 동작을 위한 기본 data
+use jsp;
+
+delete from img;
+ALTER TABLE img AUTO_INCREMENT = 1;
+insert into img(uri) values("default.png");
+insert into img(uri) values("no.png");
+
+delete from user;
+insert into user (id, passwd, name, authority, email) values("id", "passwd", "name", "admin", "test@gmail.com");
+
+-- 이후 db 생성 쿼리문들
+
+use jsp;
+
+SET SQL_SAFE_UPDATES = 0;
+
+drop table if exists img;
+create table img(
+	id 			int auto_increment ,
+    uri			varchar(15) ,
+    primary key(id)
+);
+
+delete from img;
+ALTER TABLE img AUTO_INCREMENT = 1;
+insert into img(uri) values("default.png");
+insert into img(uri) values("no.png");
+
+drop table if exists user;
+create table user(
+	id 			varchar(25) ,
+    passwd		varchar(25) ,
+    name		varchar(15) ,
+    authority	varchar(5) check (authority in ("admin", "user") ) ,
+    email 		varchar(25) ,
+    imgId		int default 1,
+    sosial		int default 0,
+    primary key(id) ,
+    foreign key (imgId) references img(id) on delete set null on update cascade
+);
+insert into user (id, passwd, name, authority, email) values("id", "passwd", "name", "admin", "test@gmail.com");
+
+CREATE TABLE board (
+    id 			INT AUTO_INCREMENT,        -- 게시글 ID (자동 증가)
+    title 		VARCHAR(100),           -- 게시글 제목
+    content 	TEXT,                 -- 게시글 내용
+    userId 		VARCHAR(25),           -- 작성자 (user 테이블의 id와 연관)
+    imgId		int default 2 ,
+    gymId		int ,
+    rate		int ,
+    created_at 	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- 생성 시간
+    PRIMARY KEY (id),
+    FOREIGN KEY (userId) REFERENCES user(id) on delete cascade , 
+    foreign key (imgid) references img(id) on update cascade on delete set null ,
+    foreign key (gymId) references gym(id) on update cascade on delete cascade
+);
+insert into board(title,content,userId, imgId, gymId, rate) values( "title", "content", "id", 1, 3704, 3);
+
+drop table if exists gym;
+drop table if exists gym_temp;
+
+-- 게시글 테이블
+CREATE TABLE gym (
+    id 			INT AUTO_INCREMENT,        -- 게시글 ID (자동 증가)
+    siteCode 	VARCHAR(3),           -- 게시글 제목
+    oldAddr 	TEXT,                 -- 게시글 내용
+    newAddr 	Text,           -- 작성자 (user 테이블의 id와 연관)
+    name		text ,
+    x			double,
+    y			double,
+    status		bool,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE gym_temp (
+    id 			INT AUTO_INCREMENT,        -- 게시글 ID (자동 증가)
+    siteCode 	VARCHAR(3),           -- 게시글 제목
+    oldAddr 	TEXT,                 -- 게시글 내용
+    newAddr 	Text,           -- 작성자 (user 테이블의 id와 연관)
+    name		text ,
+    x			double,
+    y			double,
+    status		bool,
+    PRIMARY KEY (id)
+);
+
+drop table if exists favorite;
+CREATE TABLE favorite (
+    userId      VARCHAR(25),    -- user 테이블의 id를 참조
+    gymId       INT,            -- gym 테이블의 id를 참조
+    PRIMARY KEY (userId, gymId), -- 복합 기본 키
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE, -- 사용자 삭제 시 즐겨찾기 삭제
+    FOREIGN KEY (gymId) REFERENCES gym(id) 
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE         -- 헬스장 변경 시 즐겨찾기 데이터도 변경
+);
